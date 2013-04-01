@@ -1,0 +1,31 @@
+{
+  "name": "heya-promise",
+  "version": "0.1.1",
+  "description": "Then-able promises.",
+  "main": "main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "heya-unit": ">=0.1"
+  },
+  "scripts": {
+    "test": "node tests/tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/heya/promise.git"
+  },
+  "keywords": [
+    "asynchronous",
+    "promise",
+    "promises",
+    "event",
+    "events",
+    "event-driven programming",
+    "EDP"
+  ],
+  "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://lazutkin.com/)",
+  "license": "BSD"
+}
