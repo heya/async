@@ -32,9 +32,15 @@
 				}
 			}
 		},
+		isPromise: function(val){
+			return val && val instanceof Micro;
+		},
+		rebind: function(promise){
+			promise.done(this.resolve.bind(this));
+		},
 		resolve: function(val, isEvent){
-			if(val && val instanceof Micro){
-				val.then(this.resolve.bind(this));
+			if(!isEvent && this.isPromise(val)){
+				this.rebind(val);
 			}else{
 				this.notify(this.callback ? this.callback(val) : val, isEvent);
 			}
