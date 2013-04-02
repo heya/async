@@ -28,8 +28,7 @@
 				}
 				if(!isEvent){
 					this.value = val;
-					delete this.parent;
-					delete this.chain;
+					this.parent = this.callback = this.chain = null;
 				}
 			}
 		},
