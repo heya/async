@@ -13,49 +13,45 @@
 
 	function CancelError(){}
 
-	function Promise(micro){ this.micro = micro; }
+	function Promise(micro){
+		this.micro = micro;
+		micro.isPromise = isPromise;
+		micro.rebind = makeRebind(this);
+	}
 
 	Promise.prototype = {
 		declaredClass: "promise/main/Promise",
 		cancel: function(reason){
-			if(this.micro.host && this.micro.host.canceler){
+			if(this.canceler){
 				try{
-					var r = this.micro.host.canceler(reason);
+					var r = this.canceler(reason);
 					if(typeof r != "undefined"){ reason = r; }
 				}catch(e){
 					reason = e;
 				}
 			}
 			this.micro.resolve(new Rejected(typeof reason != "undefined" ? reason : new CancelError()));
-			this.micro.canceled = true;
+			this.canceled = true;
 		},
 		then: function(callback, errback, progback){
-			return new Promise(callback && callback instanceof Deferred ?
-				this.micro.then(callback.micro.resolve.bind(callback)) :
-				this.micro.then(Multiplexer(callback, errback, progback)));
+			return new Promise(this.micro.then(makeMultiplexer(callback, errback, progback)));
 		},
 		done: function(callback, errback, progback){
-			this.micro.done(Multiplexer(callback, errback, progback));
+			this.micro.done(makeMultiplexer(callback, errback, progback));
 		}
 	};
 
 	function Deferred(canceler){
-		this.micro = new Micro();
-		this.micro.host = this;
+		// intentionally altering Promise constructor parameters
+		Promise.call(this, new Micro());
 		this.canceler = canceler;
 	}
 	Deferred.prototype = Object.create(Promise.prototype);
 	Deferred.prototype.declaredClass = "promise/main/Deferred";
 
-	Deferred.prototype.resolve = makeResolver(Resolved);
-	Deferred.prototype.reject  = makeResolver(Rejected);
-
-	Deferred.prototype.progress = function(val){
-		if(!this.micro.canceled){
-			//assert(!("value" in this.micro));
-			this.micro.resolve(new Progress(val), true);
-		}
-	};
+	Deferred.prototype.resolve  = makeResolver(Resolved);
+	Deferred.prototype.reject   = makeResolver(Rejected);
+	Deferred.prototype.progress = makeResolver(Progress, true);
 
 	// export
 
@@ -65,43 +61,53 @@
 
 	// utilities
 
-	function Multiplexer(callback, errback, progback){
-		return function(val){
-			if(val instanceof Progress){
-				if(progback){
-					try{
-						progback(val.x);
-					}catch(e){
-						// suppress
-					}
-				}
-				return val;
-			}
-			var cb = val instanceof Resolved && callback || val instanceof Rejected && errback;
-			if(cb){
-				try{
-					val = new Resolved(cb(val.x));
-				}catch(e){
-					return new Rejected(e);
-				}
-			}
-			return val;
+	function isPromise(val){
+		return val.x && typeof val.x.then == "function";
+	}
+
+	function makeRebind(host){
+		return function(promise){
+			promise = promise.x;
+			host.canceler = typeof promise.cancel == "function" ?
+				function(reason){ promise.cancel(reason); } : function(){};
+			promise[typeof promise.done == "function" ? "done" : "then"](
+				makeResolver(Resolved).bind(host),
+				makeResolver(Rejected).bind(host),
+				makeResolver(Progress, true).bind(host));
 		};
 	}
 
-	function makeResolver(Type){
+	function makeMultiplexer(callback, errback, progback){
+		return callback && callback instanceof Deferred ?
+				callback.micro.resolve.bind(callback.micro) :
+				function(val){
+					if(val instanceof Progress){
+						if(progback){
+							try{
+								progback(val.x);
+							}catch(e){
+								// suppress
+							}
+						}
+						return val;
+					}
+					var cb = val instanceof Resolved && callback || val instanceof Rejected && errback;
+					if(cb){
+						try{
+							val = new Resolved(cb(val.x));
+						}catch(e){
+							return new Rejected(e);
+						}
+					}
+					return val;
+				};
+	}
+
+	function makeResolver(Type, isEvent){
 		return function(val){
-			if(!this.micro.canceled){
+			if(!this.canceled){
 				//assert(!("value" in this.micro));
-				if(val && typeof val.then == "function"){
-					// hook on an external promise
-					this.micro.host.canceler = typeof val.cancel == "function" ?
-						function(reason){ val.cancel(reason); } : function(){};
-					val[typeof val.done == "function" ? "done" : "then"](
-						this.resolve.bind(this), this.reject.bind(this), this.progress.bind(this));
-				}else{
-					this.micro.resolve(new Type(val));
-				}
+				this.micro.resolve(new Type(val), isEvent);
 			}
 		};
 	}
