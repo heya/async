@@ -78,29 +78,33 @@
 	}
 
 	function makeMultiplexer(callback, errback, progback){
-		return callback && callback instanceof Deferred ?
-				callback.micro.resolve.bind(callback.micro) :
-				function(val){
-					if(val instanceof Progress){
-						if(progback){
-							try{
-								progback(val.x);
-							}catch(e){
-								// suppress
-							}
-						}
-						return val;
+		if(callback && callback instanceof Deferred){
+			return callback.micro.resolve.bind(callback.micro);
+		}
+		callback = typeof callback == "function" && callback;
+		errback  = typeof errback  == "function" && errback;
+		progback = typeof progback == "function" && progback;
+		return function(val){
+			if(val instanceof Progress){
+				if(progback){
+					try{
+						progback(val.x);
+					}catch(e){
+						// suppress
 					}
-					var cb = val instanceof Resolved && callback || val instanceof Rejected && errback;
-					if(cb){
-						try{
-							val = new Resolved(cb(val.x));
-						}catch(e){
-							return new Rejected(e);
-						}
-					}
-					return val;
-				};
+				}
+				return val;
+			}
+			var cb = val instanceof Resolved && callback || val instanceof Rejected && errback;
+			if(cb){
+				try{
+					val = new Resolved(cb(val.x));
+				}catch(e){
+					return new Rejected(e);
+				}
+			}
+			return val;
+		};
 	}
 
 	function makeResolver(Type, isEvent){
