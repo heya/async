@@ -1,11 +1,13 @@
 (function(factory){
 	if(typeof define != "undefined"){ // AMD
-		define([], factory);
+		define(["module", "heya-logger/assert"], factory);
 	}else if(typeof module != "undefined"){ // node.js
-		module.exports = factory();
+		module.exports = factory(module, require("heya-logger/assert"));
 	}
-})(function(){
+})(function(module, logger){
 	"use strict";
+
+	logger = logger.getLogger(module);
 
 	// Based on Max' micro-deferred: https://gist.github.com/MaxMotovilov/4750596
 
@@ -39,6 +41,7 @@
 			promise.done(this.resolve.bind(this));
 		},
 		resolve: function(val, isEvent){
+			logger.assert(!("value" in this), "Attempt to resolve an already resolved promise.");
 			if(!isEvent && this.isPromise(val)){
 				this.rebind(val);
 			}else{

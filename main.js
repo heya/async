@@ -106,7 +106,6 @@
 	function makeResolver(Type, isEvent){
 		return function(val){
 			if(!this.canceled){
-				//assert(!("value" in this.micro));
 				this.micro.resolve(new Type(val), isEvent);
 			}
 		};
