@@ -1,12 +1,12 @@
 {
   "name": "heya-async",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Asynchronous utilities: promises, deferreds.",
   "directories": {
     "test": "tests"
   },
   "dependencies": {
-    "heya-logger": ">=0.1"
+    "heya-ice": ">=0.1"
   },
   "devDependencies": {
     "heya-unit": ">=0.1"

@@ -1,8 +1,8 @@
 (function(factory){
 	if(typeof define != "undefined"){ // AMD
-		define(["module", "heya-logger/assert"], factory);
+		define(["module", "heya-ice/assert"], factory);
 	}else if(typeof module != "undefined"){ // node.js
-		module.exports = factory(module, require("heya-logger/assert"));
+		module.exports = factory(module, require("heya-ice/assert"));
 	}
 })(function(module, logger){
 	"use strict";
