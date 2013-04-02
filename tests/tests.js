@@ -30,8 +30,8 @@
 				a.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback: value"}
+				{text: "resolving"},
+				{text: "callback: value"}
 			]
 		},
 		{
@@ -42,8 +42,8 @@
 				a.then(function(v){ t.info("callback: " + v); });
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback: value"}
+				{text: "resolving"},
+				{text: "callback: value"}
 			]
 		},
 		{
@@ -55,9 +55,9 @@
 				a.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -69,9 +69,9 @@
 					then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -84,9 +84,9 @@
 				b.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "resolving b"},
-				{meta: {name: "info"}, text: "callback: value"}
+				{text: "resolving a"},
+				{text: "resolving b"},
+				{text: "callback: value"}
 			]
 		},
 		{
@@ -100,10 +100,10 @@
 				b.resolve("value 2");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "callback 1: value 1"},
-				{meta: {name: "info"}, text: "resolving b"},
-				{meta: {name: "info"}, text: "callback 2: value 2"}
+				{text: "resolving a"},
+				{text: "callback 1: value 1"},
+				{text: "resolving b"},
+				{text: "callback 2: value 2"}
 			]
 		},
 		{
@@ -117,10 +117,10 @@
 				a.resolve("value 1");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving b"},
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "callback 1: value 1"},
-				{meta: {name: "info"}, text: "callback 2: value 2"}
+				{text: "resolving b"},
+				{text: "resolving a"},
+				{text: "callback 1: value 1"},
+				{text: "callback 2: value 2"}
 			]
 		},
 		{
@@ -132,9 +132,9 @@
 				a.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -146,9 +146,9 @@
 				a.then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -162,10 +162,10 @@
 				b.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "resolving b"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving a"},
+				{text: "resolving b"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -179,10 +179,10 @@
 				a.resolve(b);
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving b"},
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"}
+				{text: "resolving b"},
+				{text: "resolving a"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
 			]
 		},
 		{
@@ -195,10 +195,10 @@
 				a.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "resolving a"},
-				{meta: {name: "info"}, text: "callback 1: value"},
-				{meta: {name: "info"}, text: "callback 2: value"},
-				{meta: {name: "info"}, text: "callback 3: value"}
+				{text: "resolving a"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"},
+				{text: "callback 3: value"}
 			]
 		},
 		// main tests
@@ -214,12 +214,12 @@
 				a.resolve("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "progress 1"},
-				{meta: {name: "info"}, text: "progback: 1"},
-				{meta: {name: "info"}, text: "progress 2"},
-				{meta: {name: "info"}, text: "progback: 2"},
-				{meta: {name: "info"}, text: "resolving value"},
-				{meta: {name: "info"}, text: "callback: value"}
+				{text: "progress 1"},
+				{text: "progback: 1"},
+				{text: "progress 2"},
+				{text: "progback: 2"},
+				{text: "resolving value"},
+				{text: "callback: value"}
 			]
 		},
 		{
@@ -234,18 +234,18 @@
 				a.reject("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "progress 1"},
-				{meta: {name: "info"}, text: "progback: 1"},
-				{meta: {name: "info"}, text: "progress 2"},
-				{meta: {name: "info"}, text: "progback: 2"},
-				{meta: {name: "info"}, text: "rejecting value"},
-				{meta: {name: "info"}, text: "errback: value"}
+				{text: "progress 1"},
+				{text: "progback: 1"},
+				{text: "progress 2"},
+				{text: "progback: 2"},
+				{text: "rejecting value"},
+				{text: "errback: value"}
 			]
 		},
 		{
 			test: function test_def_prog_can(t){
 				var a = new Deferred(function(v){ return v + " " + 2; });
-				defCallbacks(t, a).then(function(v){ t.info("extracted: " + v.x); });
+				defCallbacks(t, a).then(function(v){ t.info("extracted: " + v); });
 				t.info("progress 1");
 				a.progress(1);
 				t.info("progress 2");
@@ -254,13 +254,13 @@
 				a.cancel("value");
 			},
 			logs: [
-				{meta: {name: "info"}, text: "progress 1"},
-				{meta: {name: "info"}, text: "progback: 1"},
-				{meta: {name: "info"}, text: "progress 2"},
-				{meta: {name: "info"}, text: "progback: 2"},
-				{meta: {name: "info"}, text: "canceling value"},
-				{meta: {name: "info"}, text: "errback: [object Object]"},
-				{meta: {name: "info"}, text: "extracted: value 2"}
+				{text: "progress 1"},
+				{text: "progback: 1"},
+				{text: "progress 2"},
+				{text: "progback: 2"},
+				{text: "canceling value"},
+				{text: "errback: value 2"},
+				{text: "extracted: value 2"}
 			]
 		}
 	]);
