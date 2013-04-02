@@ -1,8 +1,7 @@
 {
-  "name": "heya-promise",
+  "name": "heya-async",
   "version": "0.1.1",
-  "description": "Then-able promises.",
-  "main": "main.js",
+  "description": "Asynchronous utilities: promises, deferreds.",
   "directories": {
     "test": "tests"
   },

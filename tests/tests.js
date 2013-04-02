@@ -1,5 +1,5 @@
 (function(factory){
-	var deps = ["module", "heya-unit", "../Micro", "../main"];
+	var deps = ["module", "heya-unit", "../Micro", "../Deferred"];
 	if(typeof define != "undefined"){ // AMD
 		define(deps, factory);
 	}else if(typeof module != "undefined"){ // node.js
