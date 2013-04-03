@@ -1,8 +1,8 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-ice/assert"], function(module, logger){
+(["module", "heya-ice/assert"], function(module, ice){
 	"use strict";
 
-	logger = logger.getLogger(module);
+	ice = ice.specialize(module);
 
 	// Based on Max' micro-deferred: https://gist.github.com/MaxMotovilov/4750596
 
@@ -36,7 +36,7 @@
 			promise.done(this.resolve.bind(this));
 		},
 		resolve: function(val, isEvent){
-			logger.assert(!("value" in this), "Attempt to resolve an already resolved promise.");
+			ice.assert(!("value" in this), "Attempt to resolve an already resolved promise.");
 			if(!isEvent && this.isPromise(val)){
 				this.rebind(val);
 			}else{
