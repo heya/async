@@ -1,15 +1,6 @@
-(function(factory){
-	var deps = ["module", "heya-unit", "../Micro", "../Deferred"];
-	if(typeof define != "undefined"){ // AMD
-		define(deps, factory);
-	}else if(typeof module != "undefined"){ // node.js
-		factory.apply(null,
-			deps.filter(function(_, i){ return i < factory.length; }).
-			map(function req(name){
-				return name === "require" && require || name === "module" && module || require(name);
-			}));
-	}
-})(function(module, unit, Micro, Deferred){
+/* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
+(["module", "heya-unit", "../Micro", "../Deferred"],
+function(module, unit, Micro, Deferred){
 	"use strict";
 
 	function defCallbacks(t, d, verb){
