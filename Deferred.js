@@ -55,8 +55,8 @@
 		var	then;
 		return	Promise.prototype._rebind.call( this, val ) ||
 				val && val.x && (
-					typeof (then=val.x.then) == "function" ||
-					typeof (then=val.x.done) == "function"
+					typeof (then=val.x.done) == "function" ||
+					typeof (then=val.x.then) == "function"
 				) &&
 				then.call( 
 					val.x, this.resolve.bind( this ),
