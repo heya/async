@@ -7,7 +7,7 @@
 	// Based on Max' micro-deferred: https://gist.github.com/MaxMotovilov/4750596
 
 	function Micro(val) {
-		ice.assert( !(val instanceof Micro), "Attempt to improperly construct a dependent promise" );
+		ice.assert( !(val instanceof Micro), "Attempt to improperly construct a promise" );
 
 		if(val instanceof Callback) {
 			this.parent = val;			// State W: Weak promise
