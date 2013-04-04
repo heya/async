@@ -6,59 +6,79 @@
 
 	// Based on Max' micro-deferred: https://gist.github.com/MaxMotovilov/4750596
 
-	function Micro(val, cb){
-		if(val && val instanceof Micro){
+	function Micro(val,cb){
+		if(val instanceof Micro) {
+			ice.assert(typeof cb == "function", "Attempt to improperly construct a promise");
 			this.parent = val;
-			this.callback = cb;
-		}else if(arguments.length){
+			this.parentChainIndex = this.parent.chain.length;
+			this.parent.chain.push(cb);
+		} else if(arguments.length) {
 			this.value = val;
+		} else {
+			this.chain = [];
 		}
-		this.chain = [];
 	}
 
 	Micro.prototype = {
 		declaredClass: "promise/micro/Micro",
-		notify: function(val, isEvent){
-			if(this.chain){
-				for(var i = 0; i < this.chain.length; ++i){
-					this.chain[i](val, isEvent);
-				}
-				if(!isEvent){
-					this.value = val;
-					this.parent = this.callback = this.chain = null;
-				}
-			}
+
+		rebind: function(val){
+			return val instanceof Micro && ( val.done( this.resolve.bind( this ) ) || true );
 		},
-		isPromise: function(val){
-			return val && val instanceof Micro;
-		},
-		rebind: function(promise){
-			promise.done(this.resolve.bind(this));
-		},
+
 		resolve: function(val, isEvent){
 			ice.assert(!("value" in this), "Attempt to resolve an already resolved promise.");
-			if(!isEvent && this.isPromise(val)){
-				this.rebind(val);
-			}else{
-				this.notify(this.callback ? this.callback(val) : val, isEvent);
+			ice.assert(!("parent" in this), "Attempt to directly resolve a dependent promise");
+			ice.assert(this.chain, "BUG: malformed promise object");
+
+			if( isEvent || !this.rebind( val ) ) {
+				for(var i = 0; i < this.chain.length; ++i)
+					this.chain[i](val, isEvent);
+
+				if(!isEvent){
+					this.value = val;
+					delete this.chain;
+				}
 			}
 		},
+
 		then: function(cb){
-			if("value" in this){
-				return new Micro(cb(this.value));
+			if("value" in this) {
+				var value = cb( this.value );
+				return value instanceof Micro ? value : new Micro( value );
 			}
-			var micro = new Micro(this, cb);
-			this.chain.push(micro.resolve.bind(micro));
-			return micro;
+
+			this.connect();
+
+			return new Micro( this, cb );
 		},
+
 		done: function(cb){
-			if("value" in this){
+			if("value" in this) {
 				cb(this.value);
-			}else{
-				this.chain.push(cb);
+			} else {
+				this.connect();
+				this.chain.push( cb );
+			}
+		},
+
+		connect: function() {
+			if( this.parent ) {
+				this.parent.chain[ this.parentChainIndex ] =
+					callAndForward( this.parent.chain[ this.parentChainIndex ], this );
+				delete this.parent;
+				delete this.parentChainIndex;
+				this.chain = [];
 			}
 		}
 	};
 
 	return Micro;
+
+	function callAndForward( cb, promise ) {
+		return function( val, isEvent ) {
+			promise.resolve( cb( val ), isEvent );
+		}
+	}
 });
+

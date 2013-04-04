@@ -10,8 +10,7 @@
 
 	function Promise(micro){
 		this.micro = micro;
-		micro.isPromise = isPromise;
-		micro.rebind = makeRebind(this);
+		micro.rebind = this._rebind.bind( this );
 	}
 
 	Promise.prototype = {
@@ -33,6 +32,10 @@
 		},
 		done: function(callback, errback, progback){
 			this.micro.done(makeMultiplexer(callback, errback, progback));
+		},
+
+		_rebind: function( val ) {
+			return val && val.x instanceof Promise && Micro.prototype.rebind.call( this.micro, val.x.micro );
 		}
 	};
 
@@ -48,6 +51,19 @@
 	Deferred.prototype.reject   = makeResolver(Rejected);
 	Deferred.prototype.progress = makeResolver(Progress, true);
 
+	Deferred.prototype._rebind = function( val ) {
+		var	then;
+		return	Promise.prototype._rebind.call( this, val ) ||
+				val && val.x && (
+					typeof (then=val.x.then) == "function" ||
+					typeof (then=val.x.done) == "function"
+				) &&
+				then.call( 
+					val.x, this.resolve.bind( this ),
+					this.reject.bind( this ), this.progress.bind( this )
+				);
+	}
+
 	// export
 
 	Deferred.CancelError = CancelError;
@@ -55,22 +71,6 @@
 	return Deferred;
 
 	// utilities
-
-	function isPromise(val){
-		return val.x && typeof val.x.then == "function";
-	}
-
-	function makeRebind(host){
-		return function(promise){
-			promise = promise.x;
-			host.canceler = typeof promise.cancel == "function" ?
-				function(reason){ promise.cancel(reason); } : function(){};
-			promise[typeof promise.done == "function" ? "done" : "then"](
-				makeResolver(Resolved).bind(host),
-				makeResolver(Rejected).bind(host),
-				makeResolver(Progress, true).bind(host));
-		};
-	}
 
 	function makeMultiplexer(callback, errback, progback){
 		if(callback && callback instanceof Deferred){
