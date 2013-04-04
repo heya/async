@@ -192,6 +192,20 @@ function(module, unit, Micro, Deferred){
 				{text: "callback 3: value"}
 			]
 		},
+		{
+			test: function test_chain_then_resolve_then(t){
+				var a = new Micro(),
+					b = a.then(function(v){ t.info("callback 1: " + v); return v + " 2"; });
+				t.info("resolving a");
+				a.resolve("value");
+				b.done(function(v){ t.info("callback 2: " + v); });
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value 2"},
+			]
+		},
 		// main tests
 		{
 			test: function test_def_prog_res(t){
