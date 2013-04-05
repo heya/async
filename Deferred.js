@@ -49,7 +49,7 @@
 
 	Deferred.prototype.resolve  = makeResolver(Resolved);
 	Deferred.prototype.reject   = makeResolver(Rejected);
-	Deferred.prototype.progress = makeResolver(Progress, true);
+	Deferred.prototype.progress = makeResolver(Progress);
 
 	Deferred.prototype._rebind = function(val){
 		var	then;
@@ -99,7 +99,8 @@
 		};
 	}
 
-	function makeResolver(Type, isEvent){
+	function makeResolver(Type){
+		var isEvent = Type === Progress;
 		return function(val){
 			if(!this.canceled){
 				this.micro.resolve(new Type(val), isEvent);
