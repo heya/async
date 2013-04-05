@@ -40,8 +40,17 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 			test: function test_timeout_all_fail(t){
 				var x = t.startAsync("async");
 				all(timeout.from(300), timeout.from(100), timeout.failOn(200)).
-					done(function(v){ t.error("Should not be here"); x.done(); },
-						function(v){ eval(t.TEST("v === 200")); x.done(); });
+					done(function(v){
+							try{
+								t.error("Should not be here");
+							}finally{
+								x.done();
+							}
+						},
+						function(v){
+							eval(t.TEST("v === 200"));
+							x.done();
+						});
 			}
 		},
 		{
@@ -91,6 +100,27 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 				{text: "rejecting x"},
 				{text: "errback: value"}
 			]
+		},
+		function test_promisify(t){
+			if(typeof define != "function"){
+				// node.js in our case
+				var promisify = require("../promisify"),
+					x = t.startAsync("file-access"),
+					fs = require("fs"),
+					deferred = promisify(fs.stat)("Deferred.js");
+				deferred.done(
+					function(stats){
+						//t.info("fs.stat for Deferred.js: " + JSON.stringify(stats));
+						x.done();
+					},
+					function(error){
+						try{
+							t.error("fs.stat for Deferred.js has failed");
+						}finally{
+							x.done();
+						}
+					});
+			}
 		}
 	]);
 
