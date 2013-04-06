@@ -34,10 +34,18 @@
 			this.canceled = true;
 		},
 		then: function(callback, errback, progback){
+			if(callback && callback instanceof Deferred){
+				var r = this.then();
+				callback.micro.resolve( new Resolved( r ) );
+				return r;
+			}			
 			return new Promise(this.micro.then(makeMultiplexer(callback, errback, progback)));
 		},
 		done: function(callback, errback, progback){
-			this.micro.done(makeMultiplexer(callback, errback, progback));
+			if(callback && callback instanceof Deferred)
+				callback.micro.resolve( new Resolved( this ) );
+			else
+				this.micro.done(makeMultiplexer(callback, errback, progback));
 		},
 		protect: function() {
 			this.done();
@@ -80,9 +88,6 @@
 	// utilities
 
 	function makeMultiplexer(callback, errback, progback){
-		if(callback && callback instanceof Deferred){
-			return callback.micro.resolve.bind(callback.micro);
-		}
 		callback = typeof callback == "function" && callback;
 		errback  = typeof errback  == "function" && errback;
 		progback = typeof progback == "function" && progback;
