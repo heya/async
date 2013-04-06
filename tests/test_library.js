@@ -148,7 +148,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 		},
 		{
 			test: function test_all_sync_success(t) {
-				all( "value", undefined )
+				all( when("value"), undefined )
 					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
 			},
 			logs: [
@@ -246,7 +246,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 		},
 		{
 			test: function test_any_sync_success(t) {
-				any( "value", undefined )
+				any( when("value"), undefined )
 					.done( function(v) { t.info( "callback: " + v ); } );
 			},
 			logs: [
@@ -342,6 +342,64 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 				{text: "callback 2: a"},
 				{text: "resolving b"},
 				{text: "callback 1: b"}
+			]
+		},
+		{
+			test: function test_one_sync_success(t) {
+				any.one( when("value"), undefined )
+					.done( function(v) { t.info( "callback: " + v ); } );
+			},
+			logs: [
+				{text: "callback: value"}
+			]
+		},
+		{
+			test: function test_one_success(t) {
+				var a = new Deferred(),
+					b = new Deferred( function(v){ t.info( "cancelling b: " + v ); } );
+				any.one(a,b)
+					.done( function(v) { t.info( "callback: " + v ); } );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback: a"},
+				{text: "cancelling b: [Error: not required]"}
+			]
+		},
+		{
+			test: function test_one_failure1(t) {
+				var a = new Deferred( function(v){ t.info( "cancelling a: " + v ); } ),
+					b = new Deferred();
+				any.one(a,b)
+					.done( function(v) { t.info( "callback: " + v ); },
+						   function(err) { t.info( "errback: " + err ); return err; } );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+			},
+			logs: [
+				{text: "rejecting b"},
+				{text: "cancelling a: [Error: not required]"},
+				{text: "errback: b"}
+			]
+		},
+		{
+			test: function test_one_cancel(t) {
+				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
+					b = new Deferred( function(v){ t.info( "cancelled b: " + v ); } ),
+					c = any.one(a,b);
+
+				c.done( function(v) { t.info( "callback: " + v ); },
+						function(err) { t.info( "errback: " + err ); return err; } );
+
+				t.info( "rejecting a" );
+				a.reject("a");
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "cancelled b: [Error: not required]"},
+				{text: "errback: a"}
 			]
 		}
 	]);

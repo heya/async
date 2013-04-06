@@ -9,7 +9,7 @@
 		toString: function(){ return "[Error: not required]" }
 	}
 
-	function impl(cancelStragglers) {
+	function impl(cancelStragglers,firstFailureConclusive) {
 		return function any(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
@@ -24,6 +24,8 @@
 			);
 
 			if(todo){
+				if( firstFailureConclusive )
+					todo = 1;
 				array.forEach(function(p, i){
 					if(p && typeof p.then == "function"){
 						when(p, succeed(i), failed(i));
@@ -37,6 +39,7 @@
 
 			function succeed(index){
 				return function(value){
+					delete array[index];
 					if( !resolved ) {
 						resolved = true;
 						deferred.resolve(value);
@@ -49,6 +52,9 @@
 				return function(err){
 					delete array[index];
 					if(!resolved && !--todo){
+						resolved = true;
+						if( cancelStragglers ) 
+							cancel(new NotRequiredError(),index);
 						deferred.reject(err);
 					}
 				};
@@ -68,6 +74,7 @@
 	var any = impl(true);
 	any.exclusive = any;
 	any.inclusive = impl(false);
+	any.one = impl(true,true);
 
 	return any;
 });
