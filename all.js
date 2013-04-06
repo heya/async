@@ -4,8 +4,8 @@
 
 	// based on https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
 
-	function runInParallel(failOnError){
-		return function(array){
+	function impl(failOnError){
+		return function all(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
 			var todo = array.reduce(function(count, p){
@@ -56,8 +56,9 @@
 		}
 	}
 
-	var all = runInParallel(true);
-	all.runInParallel = runInParallel;
+	var all = impl(true);
+	all.exclusive = all;
+	all.inclusive = impl(false);
 
 	return all;
 });

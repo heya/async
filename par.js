@@ -2,5 +2,5 @@
 (["./all"], function(all){
 	"use strict";
 
-	return all.runInParallel(false);
+	return all.inclusive;
 });
