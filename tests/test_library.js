@@ -164,7 +164,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 			]
 		},
 		{
-			test: function test_all_failure(t) {
+			test: function test_all_failure1(t) {
 				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
 					b = new Deferred();
 				all(a,b)
@@ -176,6 +176,24 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 			logs: [
 				{text: "rejecting b"},
 				{text: "cancelled a: b"},
+				{text: "errback: b"}
+			]
+		},
+		{
+			test: function test_all_failure2(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				all(a,b)
+					.done( function(v) { t.info( "callback: " + v.join(',') ); },
+						   function(err) { t.info( "errback: " + err ); return err; } );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "rejecting b"},
 				{text: "errback: b"}
 			]
 		},
@@ -200,6 +218,23 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 				{text: "errback: c"}
 			]
 		},
+		{
+			test: function test_all_inclusive(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				all.inclusive(a,b)
+					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
+				t.info( "resolving b" );
+				b.resolve( "b" );
+				t.info( "rejecting a" );
+				a.reject( "a" );
+			},
+			logs: [
+				{text: "resolving b"},
+				{text: "rejecting a"},
+				{text: "callback: a,b"}
+			]
+		}
 	]);
 
 	return {};
