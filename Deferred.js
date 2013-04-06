@@ -11,6 +11,7 @@
 	function Promise(micro){
 		this.micro = micro;
 		micro.rebind = this._rebind.bind(this);
+		micro.cancel = this.cancel.bind(this);
 	}
 
 	Promise.prototype = {
@@ -24,7 +25,12 @@
 					reason = e;
 				}
 			}
-			this.micro.resolve(new Rejected(typeof reason != "undefined" ? reason : new CancelError()));
+		
+			if(typeof reason == "undefined")
+				reason = new CancelError();
+
+			Micro.prototype.cancel.call(this.micro,reason);
+			this.micro.resolve(new Rejected(reason));
 			this.canceled = true;
 		},
 		then: function(callback, errback, progback){

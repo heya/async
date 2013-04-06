@@ -197,6 +197,19 @@ function(module, unit, Micro){
 				{text: "callback 1: value"},
 				{text: "callback 2: value 2"},
 			]
+		},
+		{
+			test: function test_chain_to_resolved(t) {
+				var a = new Micro(),
+					b = new Micro( "value" );
+				a.done( function(v){ t.info("callback: " + v); } );
+				t.info("resolving a");
+				a.resolve( b );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback: value"}
+			]
 		}
 	]);
 
