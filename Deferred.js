@@ -101,8 +101,8 @@
 				}
 				return val;
 			}
-			var cb = val instanceof Resolved && callback ||
-						val instanceof Rejected && errback;
+			var err, cb = val instanceof Resolved && callback ||
+					 	  val instanceof Rejected && (err = val.x, errback );
 			if(cb){
 				try{
 					var v = cb(val.x);
@@ -111,10 +111,14 @@
 					if( notLast )
 						return new Rejected(e);
 					else
-						throw e; // FIXME: ice.uncaught()
+						err = e;
 				}
 			}
-			return val;
+
+			if( err )
+				throw err; // ice.uncaught( err );
+			else
+				return val;
 		};
 	}
 

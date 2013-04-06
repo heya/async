@@ -265,6 +265,18 @@ function(module, unit, Deferred){
 				{text: "errback 1: value-x"},
 				{text: "errback 2: value-x"}
 			]
+		},
+		{
+			test: function test_simple_reject(t){
+				var a = new Deferred();
+				a.done( function(v){ t.info( "callback: " + v ); } );
+				t.info("rejecting a");
+				a.reject("value");
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "value", meta:{ name: "error" } }
+			]
 		}
 	]);
 
