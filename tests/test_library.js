@@ -147,6 +147,15 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			]
 		},
 		{
+			test: function test_all_sync_success(t) {
+				all( "value", undefined )
+					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
+			},
+			logs: [
+				{text: "callback: value,"}
+			]
+		},
+		{
 			test: function test_all_success(t) {
 				var a = new Deferred(),
 					b = new Deferred();
@@ -233,6 +242,15 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 				{text: "resolving b"},
 				{text: "rejecting a"},
 				{text: "callback: a,b"}
+			]
+		},
+		{
+			test: function test_any_sync_success(t) {
+				any( "value", undefined )
+					.done( function(v) { t.info( "callback: " + v ); } );
+			},
+			logs: [
+				{text: "callback: value"}
 			]
 		},
 		{

@@ -23,9 +23,15 @@
 					}
 			);
 
-			array.forEach(function(p, i){
-				when(p, succeed(i), failed(i));
-			});
+			if(todo){
+				array.forEach(function(p, i){
+					if(p && typeof p.then == "function"){
+						when(p, succeed(i), failed(i));
+					}
+				});
+			}else{
+				deferred.resolve(array[0]);
+			}
 
 			return deferred;
 
