@@ -92,7 +92,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 			test: function test_adapter_reject(t){
 				var x = new Deferred(),
 					a = adapt(x);
-				a.done(null, function(v){ t.info("errback: " + v); throw v; });
+				a.done(null, function(v){ t.info("errback: " + v); return v; });
 				t.info("rejecting x");
 				x.reject("value");
 			},

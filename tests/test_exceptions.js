@@ -148,7 +148,7 @@ function(module, unit, Deferred){
 				{text: "rejecting a"},
 				{text: "errback 1: value"},
 				{text: "errback 2: value"},
-				{text: "value-b", meta:{ name: "error" } },
+				{text: "value-b", meta:{ name: "error" } }
 			]
 		},
 		{
@@ -177,13 +177,14 @@ function(module, unit, Deferred){
 				{text: "progback 2: v2"},
 				{text: "rejecting a"},
 				{text: "errback 1: value"},
-				{text: "errback 2: value-a"}
+				{text: "errback 2: value-a"},
+				{text: "value-a-b", meta:{ name: "error" } }
 			]
 		},
 		{
 			test: function test_native_deferreds_resolve_throw(t){
 				var a = new Deferred(), b = new Deferred();
-				a.done(function(v){ t.info("callback 1: " + v); throw v + "-a"; },
+				a.done(function(v){ t.info("callback 1: " + v); },
 					function(v){ t.info("errback 1: " + v); throw v + "-a"; },
 					function(v){ t.info("progback 1: " + v); throw v + "-a"; });
 				b.done(function(v){ t.info("callback 2: " + v); throw v + "-b"; },
@@ -206,7 +207,8 @@ function(module, unit, Deferred){
 				{text: "progback 2: v2"},
 				{text: "resolving a"},
 				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				{text: "callback 2: value"},
+				{text: "value-b", meta:{ name: "error" } }
 			]
 		},
 		{
@@ -235,7 +237,8 @@ function(module, unit, Deferred){
 				{text: "progback 2: v2"},
 				{text: "resolving a"},
 				{text: "callback 1: value"},
-				{text: "errback 2: value-a"}
+				{text: "errback 2: value-a"},
+				{text: "value-a-b", meta:{ name: "error" } }
 			]
 		},
 		{
@@ -243,12 +246,12 @@ function(module, unit, Deferred){
 				var a = new Deferred(
 						function(reason){ t.info("cancel 1: " + reason); return reason + "-x"; });
 				a.done(function(v){ t.info("callback 1: " + v); return v + "-a"; },
-					function(v){ t.info("errback 1: " + v); throw v + "-a"; },
+					function(v){ t.info("errback 1: " + v); return v + "-a"; },
 					function(v){ t.info("progback 1: " + v); });
 				var b = new Deferred(
 						function(reason){ t.info("cancel 2: " + reason); return reason + "-y"; });
 				b.done(function(v){ t.info("callback 2: " + v); return v + "-b"; },
-					function(v){ t.info("errback 2: " + v); throw v + "-b"; },
+					function(v){ t.info("errback 2: " + v); return v + "-b"; },
 					function(v){ t.info("progback 2: " + v); });
 				t.info("resolving b with a");
 				b.resolve(a);
