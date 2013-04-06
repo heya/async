@@ -39,7 +39,10 @@
 		done: function(callback, errback, progback){
 			this.micro.done(makeMultiplexer(callback, errback, progback));
 		},
-
+		protect: function() {
+			this.done();
+			return this.then();
+		},
 		_rebind: function( val ) {
 			return val && val.x instanceof Promise && Micro.prototype.rebind.call(this.micro, val.x.micro);
 		}
