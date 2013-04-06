@@ -125,7 +125,7 @@ function(module, unit, Deferred){
 			test: function test_native_deferreds_reject_throw(t){
 				var a = new Deferred(), b = new Deferred();
 				a.done(function(v){ t.info("callback 1: " + v); return v + "-a"; },
-					function(v){ t.info("errback 1: " + v); throw v + "-a"; },
+					function(v){ t.info("errback 1: " + v); return v + "-a"; },
 					function(v){ t.info("progback 1: " + v); return v + "-a"; });
 				b.done(function(v){ t.info("callback 2: " + v); return v + "-b"; },
 					function(v){ t.info("errback 2: " + v); throw v + "-b"; },
@@ -147,7 +147,8 @@ function(module, unit, Deferred){
 				{text: "progback 2: v2"},
 				{text: "rejecting a"},
 				{text: "errback 1: value"},
-				{text: "errback 2: value"}
+				{text: "errback 2: value"},
+				{text: "value-b", meta:{ name: "error" } },
 			]
 		},
 		{

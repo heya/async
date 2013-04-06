@@ -91,7 +91,7 @@
 		callback = typeof callback == "function" && callback;
 		errback  = typeof errback  == "function" && errback;
 		progback = typeof progback == "function" && progback;
-		return function(val){
+		return function(val,notLast){
 			if(val instanceof Progress){
 				if(progback){
 					try{
@@ -107,7 +107,10 @@
 					var v = cb(val.x);
 					return typeof v == "undefined" ? val : new Resolved(v);
 				}catch(e){
-					return new Rejected(e);
+					if( notLast )
+						return new Rejected(e);
+					else
+						throw e; // FIXME: ice.uncaught()
 				}
 			}
 			return val;
