@@ -54,6 +54,38 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_rej_pass(t){
+				var a = new Deferred();
+				a.then( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); } )
+				 .done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("rejecting error");
+				a.reject("error");
+			},
+			logs: [
+				{text: "rejecting error"},
+				{text: "errback 1: error"},
+				{text: "errback 2: error"}
+			]
+		},
+		{
+			test: function test_def_rej_res(t){
+				var a = new Deferred();
+				a.then( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); return "value"; } )
+				 .done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("rejecting error");
+				a.reject("error");
+			},
+			logs: [
+				{text: "rejecting error"},
+				{text: "errback 1: error"},
+				{text: "callback 2: value"}
+			]
+		},
+		{
 			test: function test_def_prog_can(t){
 				var a = new Deferred(function(v){ return v + " " + 2; });
 				defCallbacks(t, a).then(function(v){ t.info("extracted: " + v); });
@@ -102,8 +134,22 @@ function(module, unit, Deferred){
 		{
 			test: function test_def_then2_resolve(t){
 				var a = new Deferred();
-				a.then(function(v){ t.info("callback 1: " + v); return v; }).
-					then(function(v){ t.info("callback 2: " + v); });
+				a.then(function(v){ t.info("callback 1: " + v); return v; })
+				 .then(function(v){ t.info("callback 2: " + v); });
+				t.info("resolving");
+				a.resolve("value");
+			},
+			logs: [
+				{text: "resolving"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
+			]
+		},
+		{
+			test: function test_def_then_pass(t){
+				var a = new Deferred();
+				a.then(function(v){ t.info("callback 1: " + v); })
+				 .done(function(v){ t.info("callback 2: " + v); });
 				t.info("resolving");
 				a.resolve("value");
 			},
