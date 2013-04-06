@@ -108,7 +108,9 @@
 
 	Callback.prototype = {
 		resolve: function(val, isEvent){
-			val = this.callback(val, isEvent);
+			var v = this.callback(val, isEvent);
+			if(!isEvent && typeof v != "undefined")
+				val = v;
 			delete this.parent;
 			if(this.promise){
 				this.promise.resolve(val, isEvent);

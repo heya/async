@@ -99,7 +99,8 @@
 						val instanceof Rejected && errback;
 			if(cb){
 				try{
-					val = new Resolved(cb(val.x));
+					val = cb(val.x);
+					return typeof val == "undefined" ? val : new Resolved(val);
 				}catch(e){
 					return new Rejected(e);
 				}
