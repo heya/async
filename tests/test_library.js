@@ -125,7 +125,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 		{
 			test: function test_when_value(t) {
 				when( "value", function(v){ t.info( "callback 1: " + v ); } )
-					.then( function(v){ t.info( "callback 2: " + v ); } );
+					.done( function(v){ t.info( "callback 2: " + v ); } );
 			},
 			logs: [
 				{text: "callback 1: value"},
@@ -136,7 +136,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 			test: function test_when_promise(t) {
 				var a = new Deferred();
 				when( a, function(v){ t.info( "callback 1: " + v ); } )
-					.then( function(v){ t.info( "callback 2: " + v ); } );
+					.done( function(v){ t.info( "callback 2: " + v ); } );
 				t.info( "resolving a" );
 				a.resolve( "value" );
 			},
@@ -145,7 +145,61 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 				{text: "callback 1: value"},
 				{text: "callback 2: value"}
 			]
-		}
+		},
+		{
+			test: function test_all_success(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				all(a,b)
+					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
+				t.info( "resolving b" );
+				b.resolve( "b" );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+			},
+			logs: [
+				{text: "resolving b"},
+				{text: "resolving a"},
+				{text: "callback: a,b"}
+			]
+		},
+		{
+			test: function test_all_failure(t) {
+				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
+					b = new Deferred();
+				all(a,b)
+					.done( function(v) { t.info( "callback: " + v.join(',') ); },
+						   function(err) { t.info( "errback: " + err ); return err; } );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+			},
+			logs: [
+				{text: "rejecting b"},
+				{text: "cancelled a: b"},
+				{text: "errback: b"}
+			]
+		},
+		{
+			test: function test_all_cancel(t) {
+				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
+					b = new Deferred( function(v){ t.info( "cancelled b: " + v ); } ),
+					c = all(a,b);
+
+				c.done( function(v) { t.info( "callback: " + v.join(',') ); },
+						function(err) { t.info( "errback: " + err ); return err; } );
+
+				t.info( "resolving a" );
+				a.resolve("a");
+				t.info( "cancelling c" );
+				c.cancel( "c" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "cancelling c"},
+				{text: "cancelled b: c"},
+				{text: "errback: c"}
+			]
+		},
 	]);
 
 	return {};

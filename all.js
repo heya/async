@@ -11,7 +11,13 @@
 			var todo = array.reduce(function(count, p){
 					return count + (p && typeof p.then == "function" ? 1 : 0);
 				}, 0),
-				deferred = new Deferred(cancel), once = true,
+				once = true, cancelled,
+				deferred = new Deferred( 
+					function(why){ 
+						cancelled = true;
+						cancel(why);
+					}
+				), 
 				failed = failOnError ? failOnce : succeed;
 
 			if(todo){
@@ -32,6 +38,7 @@
 					if(!--todo){
 						deferred.resolve(array);
 					}
+					return value;
 				};
 			}
 
@@ -39,17 +46,19 @@
 				return function(error){
 					if(once){
 						once = false;
-						cancel(index);
-						deferred.reject(error);
+						cancel(error,index);
+						if( !cancelled )
+							deferred.reject(error);
 					}
+					return false;
 				};
 			}
 
-			function cancel(index){
+			function cancel(why,index){
 				array.forEach(function(p, i){
-					if(i != index && p && typeof p.then == "function" &&
+					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel();
+						p.cancel(why);
 					}
 				});
 			}
