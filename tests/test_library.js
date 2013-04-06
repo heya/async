@@ -121,6 +121,30 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 						}
 					});
 			}
+		},
+		{
+			test: function test_when_value(t) {
+				when( "value", function(v){ t.info( "callback 1: " + v ); } )
+					.then( function(v){ t.info( "callback 2: " + v ); } );
+			},
+			logs: [
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
+			]
+		},
+		{
+			test: function test_when_promise(t) {
+				var a = new Deferred();
+				when( a, function(v){ t.info( "callback 1: " + v ); } )
+					.then( function(v){ t.info( "callback 2: " + v ); } );
+				t.info( "resolving a" );
+				a.resolve( "value" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback 1: value"},
+				{text: "callback 2: value"}
+			]
 		}
 	]);
 

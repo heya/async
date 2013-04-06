@@ -82,6 +82,7 @@
 	// export
 
 	Deferred.CancelError = CancelError;
+	Deferred.Promise = Promise;
 
 	return Deferred;
 

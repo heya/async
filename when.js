@@ -7,13 +7,9 @@
 
 	return function when(value, callback, errback, progback){
 		var deferred;
-		if(value && typeof value.then == "function"){
-			deferred = new Deferred(typeof value.cancel == "function" ?
-				function(reason){ value.cancel(reason); } : null);
-			value[typeof value.done == "function" ? "done" : "then"](
-				deferred.resolve.bind(deferred), deferred.reject.bind(deferred),
-				deferred.progress.bind(deferred));
-		}else{
+		if( value instanceof Deferred.Promise ) {
+			deferred = value;
+		} else {
 			deferred = new Deferred();
 			deferred.resolve(value);
 		}
