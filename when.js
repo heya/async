@@ -13,6 +13,6 @@
 			deferred = new Deferred();
 			deferred.resolve(value);
 		}
-		return deferred.then(callback, errback, progback);
+		return arguments.length > 1 ? deferred.then(callback, errback, progback) : deferred;
 	};
 });

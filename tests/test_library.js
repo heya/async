@@ -1,7 +1,7 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
 (["module", "heya-unit", "../Deferred",
-	"../all", "../any", "../par", "../when", "../timeout", "../adapt"],
-function(module, unit, Deferred, all, any, par, when, timeout, adapt){
+	"../all", "../any", "../par", "../when", "../timeout"],
+function(module, unit, Deferred, all, any, par, when, timeout){
 	"use strict";
 
 	unit.add(module, [
@@ -78,7 +78,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 		{
 			test: function test_adapter_resolve(t){
 				var x = new Deferred(),
-					a = adapt(x);
+					a = when(x);
 				a.done(function(v){ t.info("callback: " + v); return v; });
 				t.info("resolving x");
 				x.resolve("value");
@@ -91,7 +91,7 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 		{
 			test: function test_adapter_reject(t){
 				var x = new Deferred(),
-					a = adapt(x);
+					a = when(x);
 				a.done(null, function(v){ t.info("errback: " + v); return v; });
 				t.info("rejecting x");
 				x.reject("value");
