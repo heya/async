@@ -267,7 +267,57 @@ function(module, unit, Deferred){
 				{text: "callback 1: value"},
 				{text: "callback 2: value 2"},
 			]
-		}
+		},
+		{
+			test: function test_def_then_cancel(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); } );
+				t.info("cancelling a");
+				a.cancel( "stop" );
+			},
+			logs: [
+				{text: "cancelling a"},
+				{text: "cancelled: stop"},
+				{text: "errback: stop"}
+			]
+		},
+		{
+			test: function test_def_then_b_then_cancel_b(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } ),
+					b = a.then( function(v){ t.info("callback 1: " + v); },
+								function(v){ t.info("errback 1: " + v); } );
+				b.done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("cancelling b");
+				b.cancel( "stop" );
+			},
+			logs: [
+				{text: "cancelling b"},
+				{text: "cancelled: stop"},
+				{text: "errback 1: stop"},
+				{text: "errback 2: stop"}
+			]
+		},
+		{
+			test: function test_def_then_protect_b_then_cancel_b(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } ),
+					b = a.then( function(v){ t.info("callback 1: " + v); },
+								function(v){ t.info("errback 1: " + v); } ).protect();
+				b.done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("cancelling b");
+				b.cancel( "stop" );
+				t.info("resolving a");
+				a.resolve( "value" );
+			},
+			logs: [
+				{text: "cancelling b"},
+				{text: "errback 2: stop"},
+				{text: "resolving a"},
+				{text: "callback 1: value"}
+			]
+		}		
 	]);
 
 	return {};
