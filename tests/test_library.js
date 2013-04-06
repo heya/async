@@ -234,6 +234,97 @@ function(module, unit, Deferred, all, any, par, when, timeout, adapt){
 				{text: "rejecting a"},
 				{text: "callback: a,b"}
 			]
+		},
+		{
+			test: function test_any_success(t) {
+				var a = new Deferred(),
+					b = new Deferred( function(v){ t.info( "cancelling b: " + v ); } );
+				any(a,b)
+					.done( function(v) { t.info( "callback: " + v ); } );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback: a"},
+				{text: "cancelling b: [Error: not required]"}
+			]
+		},
+		{
+			test: function test_any_failure1(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				any(a,b)
+					.done( function(v) { t.info( "callback: " + v ); },
+						   function(err) { t.info( "errback: " + err ); return err; } );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+			},
+			logs: [
+				{text: "rejecting b"},
+				{text: "resolving a"},
+				{text: "callback: a"}
+			]
+		},
+		{
+			test: function test_any_failure2(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				any(a,b)
+					.done( function(v) { t.info( "callback: " + v ); },
+						   function(err) { t.info( "errback: " + err ); return err; } );
+				t.info( "rejecting a" );
+				a.reject( "a" );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "rejecting b"},
+				{text: "errback: b"}
+			]
+		},
+		{
+			test: function test_any_cancel(t) {
+				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
+					b = new Deferred( function(v){ t.info( "cancelled b: " + v ); } ),
+					c = any(a,b);
+
+				c.done( function(v) { t.info( "callback: " + v ); },
+						function(err) { t.info( "errback: " + err ); return err; } );
+
+				t.info( "rejecting a" );
+				a.reject("a");
+				t.info( "cancelling c" );
+				c.cancel( "c" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "cancelling c"},
+				{text: "cancelled b: c"},
+				{text: "errback: c"}
+			]
+		},
+		{
+			test: function test_any_inclusive(t) {
+				var a = new Deferred(),
+					b = new Deferred(),
+					bb = b.then( function(v){ t.info( "callback 1: " + v ); } );
+				any.inclusive(a,bb)
+					.done( function(v) { t.info( "callback 2: " + v ); } );
+				t.info( "resolving a" );
+				a.resolve( "a" );
+				t.info( "resolving b" );
+				b.resolve( "b" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback 2: a"},
+				{text: "resolving b"},
+				{text: "callback 1: b"}
+			]
 		}
 	]);
 

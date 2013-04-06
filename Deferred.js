@@ -7,6 +7,9 @@
 	function Progress(x){ this.x = x; }
 
 	function CancelError(){}
+	CancelError.prototype = {
+		toString: function(){ return "[Error: cancelled]" }
+	}
 
 	function Promise(micro){
 		this.micro = micro;

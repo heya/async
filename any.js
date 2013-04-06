@@ -4,14 +4,24 @@
 
 	// based on https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
 
+	function NotRequiredError(){}
+	NotRequiredError.prototype = {
+		toString: function(){ return "[Error: not required]" }
+	}
+
 	function impl(cancelStragglers) {
 		return function any(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
 			var todo = array.reduce(function(count, p){
 					return count + (p && typeof p.then == "function" ? 1 : 0);
-				}, 0),
-				deferred = new Deferred(cancel), resolved = false;
+				}, 0), resolved, 
+				deferred = new Deferred(
+					function(why) {
+						resolved = true;
+						cancel(why);
+					}
+			);
 
 			array.forEach(function(p, i){
 				when(p, succeed(i), failed(i));
@@ -21,28 +31,28 @@
 
 			function succeed(index){
 				return function(value){
-					resolved = true;
-					deferred.resolve(value);
-					if( cancelStragglers ) cancel(index);
-				};
-			}
-
-			function failed(index){
-				return function(){
-					if(!resolved){
-						array[index] = null;
-						if(!--todo){
-							deferred.reject();
-						}
+					if( !resolved ) {
+						resolved = true;
+						deferred.resolve(value);
+						if( cancelStragglers ) cancel(new NotRequiredError(),index);
 					}
 				};
 			}
 
-			function cancel(index){
+			function failed(index){
+				return function(err){
+					delete array[index];
+					if(!resolved && !--todo){
+						deferred.reject(err);
+					}
+				};
+			}
+
+			function cancel(why,index){
 				array.forEach(function(p, i){
-					if(i != index && p && typeof p.then == "function" &&
+					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel();
+						p.cancel(why);
 					}
 				});
 			}
