@@ -283,6 +283,23 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_then_b_then_cancel_a(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
+				a.then( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); } )
+				 .done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("cancelling a");
+				a.cancel( "stop" );
+			},
+			logs: [
+				{text: "cancelling a"},
+				{text: "cancelled: stop"},
+				{text: "errback 1: stop"},
+				{text: "errback 2: stop"}
+			]
+		},
+		{
 			test: function test_def_then_b_then_cancel_b(t) {
 				var a = new Deferred( function(v){ t.info("cancelled: " + v); } ),
 					b = a.then( function(v){ t.info("callback 1: " + v); },
