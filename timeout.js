@@ -36,10 +36,10 @@
 		return one( promise, timeout.reject(ms,rejectWith) );
 	}
 
-	var timeout = actOn("resolve");
+	var timeout = actOn("reject",TimeoutError);
 
-	timeout.resolve = timeout;
-	timeout.reject = actOn("reject",TimeoutError);
+	timeout.reject = timeout;
+	timeout.resolve = actOn("resolve");
 	timeout.cancel = cancelPromise;
 
 	return timeout;
