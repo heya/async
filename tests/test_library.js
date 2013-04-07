@@ -1,7 +1,7 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
 (["module", "heya-unit", "../Deferred",
-	"../all", "../any", "../par", "../when", "../timeout"],
-function(module, unit, Deferred, all, any, par, when, timeout){
+	"../all", "../any", "../par", "../one", "../when", "../timeout"],
+function(module, unit, Deferred, all, any, par, one, when, timeout){
 	"use strict";
 
 	unit.add(module, [
@@ -10,9 +10,9 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			test: function test_timeout_seq(t){
 				var x = t.startAsync("async");
 				t.info("starting");
-				timeout.from(100).then(function(v){
+				timeout.resolve(100).then(function(v){
 					t.info("callback 1: " + v);
-					return timeout.from(v + 100);
+					return timeout.resolve(v + 100);
 				}).done(function(v){
 					t.info("callback 2: " + v);
 					x.done();
@@ -28,7 +28,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			timeout: 500,
 			test: function test_timeout_all(t){
 				var x = t.startAsync("async");
-				all(timeout.from(300), timeout.from(100), timeout.from(200)).
+				all(timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)).
 					done(function(v){
 						eval(t.TEST("t.unify(v, [300, 100, 200])"));
 						x.done();
@@ -39,7 +39,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			timeout: 500,
 			test: function test_timeout_all_fail(t){
 				var x = t.startAsync("async");
-				all(timeout.from(300), timeout.from(100), timeout.failOn(200)).
+				all(timeout.resolve(300), timeout.resolve(100), timeout.reject(200)).
 					done(function(v){
 							try{
 								t.error("Should not be here");
@@ -48,8 +48,9 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 							}
 						},
 						function(v){
-							eval(t.TEST("v === 200"));
+							eval(t.TEST("v.timeout === 200"));
 							x.done();
+							return false;
 						});
 			}
 		},
@@ -57,9 +58,9 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			timeout: 500,
 			test: function test_timeout_par(t){
 				var x = t.startAsync("async");
-				par(timeout.failOn(300), timeout.from(100), timeout.failOn(200)).
+				par(timeout.reject(300), timeout.resolve(100), timeout.reject(200)).
 					done(function(v){
-						eval(t.TEST("t.unify(v, [300, 100, 200])"));
+						eval(t.TEST("t.unify(v, [ { timeout: 300 }, 100, { timeout: 200 } ])"));
 						x.done();
 					});
 			}
@@ -68,7 +69,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			timeout: 500,
 			test: function test_timeout_any(t){
 				var x = t.startAsync("async");
-				any(timeout.from(300), timeout.from(100), timeout.from(200)).
+				any(timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)).
 					done(function(v){
 						eval(t.TEST("v === 100"));
 						x.done();
@@ -119,6 +120,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 						}finally{
 							x.done();
 						}
+						return false;
 					});
 			}
 		},
@@ -231,17 +233,35 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			test: function test_all_inclusive(t) {
 				var a = new Deferred(),
 					b = new Deferred();
-				all.inclusive(a,b)
+				par(a,b)
 					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
-				t.info( "resolving b" );
-				b.resolve( "b" );
 				t.info( "rejecting a" );
 				a.reject( "a" );
+				t.info( "resolving b" );
+				b.resolve( "b" );
 			},
 			logs: [
-				{text: "resolving b"},
 				{text: "rejecting a"},
+				{text: "resolving b"},
 				{text: "callback: a,b"}
+			]
+		},
+		{
+			test: function test_all_inclusive_failure(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				par(a,b)
+					.done( function(v) { t.info( "callback: " + v.join(',') ); },
+						   function(v) { t.info( "errback: " + v ); return v; } );
+				t.info( "rejecting a" );
+				a.reject( "a" );
+				t.info( "rejecting b" );
+				b.reject( "b" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "rejecting b"},
+				{text: "errback: b"}
 			]
 		},
 		{
@@ -326,27 +346,8 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			]
 		},
 		{
-			test: function test_any_inclusive(t) {
-				var a = new Deferred(),
-					b = new Deferred(),
-					bb = b.then( function(v){ t.info( "callback 1: " + v ); } );
-				any.inclusive(a,bb)
-					.done( function(v) { t.info( "callback 2: " + v ); } );
-				t.info( "resolving a" );
-				a.resolve( "a" );
-				t.info( "resolving b" );
-				b.resolve( "b" );
-			},
-			logs: [
-				{text: "resolving a"},
-				{text: "callback 2: a"},
-				{text: "resolving b"},
-				{text: "callback 1: b"}
-			]
-		},
-		{
 			test: function test_one_sync_success(t) {
-				any.one( when("value"), undefined )
+				one( when("value"), undefined )
 					.done( function(v) { t.info( "callback: " + v ); } );
 			},
 			logs: [
@@ -357,7 +358,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			test: function test_one_success(t) {
 				var a = new Deferred(),
 					b = new Deferred( function(v){ t.info( "cancelling b: " + v ); } );
-				any.one(a,b)
+				one(a,b)
 					.done( function(v) { t.info( "callback: " + v ); } );
 				t.info( "resolving a" );
 				a.resolve( "a" );
@@ -372,7 +373,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			test: function test_one_failure1(t) {
 				var a = new Deferred( function(v){ t.info( "cancelling a: " + v ); } ),
 					b = new Deferred();
-				any.one(a,b)
+				one(a,b)
 					.done( function(v) { t.info( "callback: " + v ); },
 						   function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "rejecting b" );
@@ -388,7 +389,7 @@ function(module, unit, Deferred, all, any, par, when, timeout){
 			test: function test_one_cancel(t) {
 				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
 					b = new Deferred( function(v){ t.info( "cancelled b: " + v ); } ),
-					c = any.one(a,b);
+					c = one(a,b);
 
 				c.done( function(v) { t.info( "callback: " + v ); },
 						function(err) { t.info( "errback: " + err ); return err; } );
