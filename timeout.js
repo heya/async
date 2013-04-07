@@ -1,5 +1,5 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["./Deferred","./any"], function(Deferred, any){
+(["./Deferred","./one"], function(Deferred, one){
 	"use strict";
 
 	function TimeoutError(ms){
@@ -33,7 +33,7 @@
 	}
 
 	function cancelPromise(promise,ms,rejectWith) {
-		return any.one( promise, timeout.reject(ms,rejectWith) );
+		return one( promise, timeout.reject(ms,rejectWith) );
 	}
 
 	var timeout = actOn("resolve");

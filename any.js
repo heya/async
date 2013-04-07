@@ -53,7 +53,7 @@
 					delete array[index];
 					if(!resolved && !--todo){
 						resolved = true;
-						cancel(new NotRequiredError(),index);
+						cancel(firstFailureConclusive ? err : new NotRequiredError(),index);
 						deferred.reject(err);
 					}
 				};

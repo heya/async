@@ -77,6 +77,22 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 			}
 		},
 		{
+			timeout: 500,
+			test: function test_timeout_cancel(t){
+				var x = t.startAsync("async"),
+					a = new Deferred( function(v){ t.info( "cancelled: " + v ); } );
+
+				timeout.cancel( a, 300, "timeout" )
+					.then( function(v){ t.info( "callback: " + v ); },
+						   function(v){ t.info( "errback: " + v ); return v; } )
+					.done( x.done.bind(x) );
+			},
+			logs: [
+				{text: "cancelled: timeout"},
+				{text: "errback: timeout"}
+			]
+		},
+		{
 			test: function test_adapter_resolve(t){
 				var x = new Deferred(),
 					a = when(x);
@@ -381,12 +397,12 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 			},
 			logs: [
 				{text: "rejecting b"},
-				{text: "cancelling a: [Error: not required]"},
+				{text: "cancelling a: b"},
 				{text: "errback: b"}
 			]
 		},
 		{
-			test: function test_one_cancel(t) {
+			test: function test_one_failure2(t) {
 				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
 					b = new Deferred( function(v){ t.info( "cancelled b: " + v ); } ),
 					c = one(a,b);
@@ -399,7 +415,7 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 			},
 			logs: [
 				{text: "rejecting a"},
-				{text: "cancelled b: [Error: not required]"},
+				{text: "cancelled b: a"},
 				{text: "errback: a"}
 			]
 		}
