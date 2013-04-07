@@ -277,7 +277,7 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 			logs: [
 				{text: "rejecting a"},
 				{text: "rejecting b"},
-				{text: "errback: b"}
+				{text: "callback: a,b"}
 			]
 		},
 		{
