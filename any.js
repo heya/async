@@ -9,7 +9,7 @@
 		toString: function(){ return "[Error: not required]" }
 	}
 
-	function impl(cancelStragglers,firstFailureConclusive) {
+	function impl(firstFailureConclusive) {
 		return function any(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
@@ -43,7 +43,7 @@
 					if( !resolved ) {
 						resolved = true;
 						deferred.resolve(value);
-						if( cancelStragglers ) cancel(new NotRequiredError(),index);
+						cancel(new NotRequiredError(),index);
 					}
 				};
 			}
@@ -53,8 +53,7 @@
 					delete array[index];
 					if(!resolved && !--todo){
 						resolved = true;
-						if( cancelStragglers ) 
-							cancel(new NotRequiredError(),index);
+						cancel(new NotRequiredError(),index);
 						deferred.reject(err);
 					}
 				};
@@ -71,10 +70,8 @@
 		};
 	}
 
-	var any = impl(true);
-	any.exclusive = any;
-	any.inclusive = impl(false);
-	any.one = impl(true,true);
+	var any = impl(false);
+	any.exclusive = impl(true);
 
 	return any;
 });

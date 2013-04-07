@@ -18,12 +18,14 @@
 						cancel(why);
 					}
 				), 
-				failed = failOnError ? failOnce : succeed;
+				fail = failOnError ? failOnce : 
+					   todo < array.length ? succeed :
+					   provisionallySucceed;
 
 			if(todo){
 				array.forEach(function(p, i){
 					if(p && typeof p.then == "function"){
-						when(p, succeed(i), failed(i));
+						when(p, succeed(i), fail(i));
 					}
 				});
 			}else{
@@ -32,13 +34,24 @@
 
 			return deferred;
 
-			function succeed(index){
+			function provisionallySucceed(index) {
+				var fail = failOnce(index),
+					succ = succeed(index,true);
+				return function(value) {
+					if( once && todo==1 )
+						return fail(value);
+					else
+						return succ(value);
+				}
+			}
+
+			function succeed(index,isFailure){
 				return function(value){
 					array[index] = value;
-					if(!--todo){
+					if(!failOnError && !isFailure) 
+						once = false;
+					if(!--todo)
 						deferred.resolve(array);
-					}
-					return value;
 				};
 			}
 
@@ -66,7 +79,6 @@
 	}
 
 	var all = impl(true);
-	all.exclusive = all;
 	all.inclusive = impl(false);
 
 	return all;
