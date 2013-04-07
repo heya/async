@@ -19,9 +19,9 @@ volo install heya/async heya-async
 
 ## Documentation
 
-* [Promise concept and implementation classes](docs/Promise.md)
-* Promise algebra: [```all()```](docs/all.md), [```any()```](docs/any.md), [```par()```](docs/par.md), [```one()```](docs/one.md)
-* [Timeouts](docs/timeout.md)
-* [Adaptor for values and foreign promise implementations](docs/when.md)
-* [Wrapper for node.js APIs](docs/promisify.md)
+* [Promise concept and implementation classes](docs/Deferred.js.md)
+* Promise algebra: [```all()```](docs/all.js.md), [```any()```](docs/any.js.md), [```par()```](docs/par.js.md), [```one()```](docs/one.js.md)
+* [Timeouts](docs/timeout.js.md)
+* [Adaptor for values and foreign promise implementations](docs/when.js.md)
+* [Wrapper for node.js APIs](docs/promisify.js.md)
 
