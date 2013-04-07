@@ -1,6 +1,6 @@
-# Asynchronicity [![Build Status](https://travis-ci.org/heya/async.png?branch=master)](https://travis-ci.org/heya/async)
+# Primitives for asynchronous execution [![Build Status](https://travis-ci.org/heya/async.png?branch=master)](https://travis-ci.org/heya/async)
 
-Asynchronous utilities: promises, deferreds.
+Promises and operations over them; useful utility functions.
 
 ## How to install
 
@@ -16,3 +16,12 @@ For your browser-based projects I suggest to use [volo.js](http://volojs.org):
 ```
 volo install heya/async heya-async
 ```
+
+## Documentation
+
+* [Promise concept and implementation classes](Promise.md)
+* Promise algebra: [```all()```](all.md), [```any()```](any.md), [```par()```](par.md), [```one()```](one.md)
+* [Timeouts](timeout.md)
+* [Adaptor for values and foreign promise implementations](when.md)
+* [Wrapper for node.js APIs](promisify.md)
+
