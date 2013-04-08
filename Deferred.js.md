@@ -53,8 +53,7 @@ available as ```Deferred.Promise``` only for the purposes of ```instanceof``` ch
 ##### Promise cancellation
 
 An unresolved promise may be *cancelled*, leading to its rejection; if the promise was obtained by chaining from another
-promise, the associated errback -- if any -- will be executed and so will be the parent promise in case it has no other
-dependendents.
+promise, the parent promise will also be cancelled in case it has no other dependendents.
 
 #### Foreign promise
 
@@ -85,6 +84,8 @@ var p = promise.then(
 );
 ```
 
+Associates callback, errback and a progress handler with a promise; returns a dependent promise.
+
 ### ```done()```
 
 ```
@@ -95,15 +96,37 @@ promise.done(
 );
 ```
 
+Associates callback, errback and a progress handler with a promise; ends the promise chain. Rules regarding the
+arguments and their execution are identical to that of the ```then()``` method. 
+
 ### ```protect()```
 
 ```
 var p = promise.protect();
 ```
 
+Returns a dependent promise cancellation of which will never lead to the cancellation of the original promise.
+
 ### ```cancel()```
 
+```
 promise.cancel( reason );
+```
+
+Cancels the promise, leading to a rejection of its direct dependents. Also cancels the parent promise if it has no other
+dependents. Overall, the effects of the cancellation must be equivalent to the following:
+
+* Find the nearest ancestor of the cancelled promise that has more than one direct dependent, or, failing that, the root
+Deferred;
+* If a Deferred was found (note that this implies that it has at most one direct dependent leading to the cancelled promise
+or it **is** the cancelled promise), execute its canceller callback if one was set at construction, passing in ```reason``` 
+(an ```undefined``` value if one was not supplied) as its argument. An exception thrown by the canceller is redirected to
+```ice.uncaught()```, any other result is ignored;
+* Execute all errbacks found upstream of the cancelled promise and downstream of the ancestor promise found during the first 
+step, ignore any results they may return or exceptions they may throw; if ```reason``` was supplied in the call to 
+```cancel()``` pass it as the argument into the errbacks, otherwise pass an instance of ```Deferred.CancelError```;
+* Reject the cancelled promise with ```reason``` supplied in the call or with an instance of ```Deferred.CancelError``` if
+```reason``` was not supplied.
 
 ## Class ```Deferred```
 
