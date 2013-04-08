@@ -45,7 +45,7 @@ respectively. By convention, the first one is called *callback* and the second o
 
 #### Native promise
 
-The implementation of a promise provided by Heya; provides additional functionality related to promise 
+The implementation of promise provided by Heya; provides additional functionality related to promise 
 *cancellation* and propagation of progress events. Any Heya API said to return a promise is guaranteed to return 
 a native promise object. Native promises should not be constructed directly; the native promise constructor is 
 available as ```Deferred.Promise``` only for the purposes of ```instanceof``` checks.
@@ -58,7 +58,7 @@ dependendents.
 
 #### Foreign promise
 
-The implementation of a promise compatible with the concept but provided by a 3rd party library. Heya APIs 
+An implementation of promise compatible with the same concept but provided by a 3rd party library. Heya APIs 
 accepting promise arguments are generally expected to interoperate with foreign promises; exceptions are flagged
 explicitly in the documentation. It is sufficient for a foreign promise to implement either ```then()``` or
 ```done()```, the latter is preferred to the former if both methods are available.
@@ -69,3 +69,50 @@ Also known as a *future*; an object used to associate the asynchronous process w
 ```Deferred``` is a subclass of a promise that supplies additional API methods to initiate resolution or rejection
 of a promise chain as well as a provision to cancel the underlying process in case when the associated promise is 
 cancelled.
+
+## Class ```Deferred.Promise```
+
+Note: cannot be constructed directly; instances are obtained by applying ```then()``` to other native promises or Deferred 
+objects.
+
+### ```then()```
+
+```
+var p = promise.then( 
+ function( value ) { ... },
+ function( error ) { ... },
+ function( value ) { ... }
+);
+```
+
+### ```done()```
+
+```
+promise.done( 
+ function( value ) { ... },
+ function( error ) { ... },
+ function( value ) { ... }
+);
+```
+
+### ```protect()```
+
+```
+var p = promise.protect();
+```
+
+### ```cancel()```
+
+promise.cancel( reason );
+
+## Class ```Deferred```
+
+### Constructor
+
+```
+var p = new Deferred( function( reason ){ ... } );
+```
+
+Constructs a new, unresolved, Deferred object.
+
+
