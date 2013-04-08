@@ -84,6 +84,12 @@ var p = promise.then(
 );
 ```
 
+or
+
+```
+var p = promise.then( deferred );
+```
+
 Associates callback, errback and a progress handler with a promise; returns a dependent promise.
 
 ### ```done()```
@@ -96,6 +102,12 @@ promise.done(
 );
 ```
 
+or
+
+```
+promise.done( deferred );
+```
+
 Associates callback, errback and a progress handler with a promise; ends the promise chain. Rules regarding the
 arguments and their execution are identical to that of the ```then()``` method. 
 
@@ -105,7 +117,7 @@ arguments and their execution are identical to that of the ```then()``` method.
 var p = promise.protect();
 ```
 
-Returns a dependent promise cancellation of which will never lead to the cancellation of the original promise.
+Returns a dependent promise cancellation of which will never lead to a cancellation of the original promise.
 
 ### ```cancel()```
 
@@ -118,10 +130,10 @@ dependents. Overall, the effects of the cancellation must be equivalent to the f
 
 * Find the nearest ancestor of the cancelled promise that has more than one direct dependent, or, failing that, the root
 Deferred;
-* If a Deferred was found (note that this implies that it has at most one direct dependent leading to the cancelled promise
-or it **is** the cancelled promise), execute its canceller callback if one was set at construction, passing in ```reason``` 
-(an ```undefined``` value if one was not supplied) as its argument. An exception thrown by the canceller is redirected to
-```ice.uncaught()```, any other result is ignored;
+* If a Deferred was found (note that this implies that it has at most one direct dependent which must lead to the cancelled 
+promise or otherwise it **is** the cancelled promise), execute its canceller callback if one was set at construction, passing 
+in ```reason``` (an ```undefined``` value if one was not supplied) as its argument. An exception thrown by the canceller is 
+redirected to ```ice.uncaught()```, any other result is ignored;
 * Execute all errbacks found upstream of the cancelled promise and downstream of the ancestor promise found during the first 
 step, ignore any results they may return or exceptions they may throw; if ```reason``` was supplied in the call to 
 ```cancel()``` pass it as the argument into the errbacks, otherwise pass an instance of ```Deferred.CancelError```;
@@ -133,9 +145,22 @@ step, ignore any results they may return or exceptions they may throw; if ```rea
 ### Constructor
 
 ```
-var p = new Deferred( function( reason ){ ... } );
+var deferred = new Deferred( function( reason ){ ... } );
 ```
 
-Constructs a new, unresolved, Deferred object.
+Constructs a new, unresolved, Deferred object. The optional argument can be used to pass in the *canceller* function which
+will only be called in the event the Deferred is cancelled and will have a chance of prematurely terminating the asynchronous
+process that was supposed to resolve it in the first place.
 
+## ```resolve()```
+
+```
+deferred.resolve( value_or_promise );
+```
+
+## ```reject()```
+
+```
+deferred.reject( value_or_promise );
+```
 
