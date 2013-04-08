@@ -2,14 +2,37 @@
 (["./Micro"], function(Micro){
 	"use strict";
 
-	function Resolved(x){ this.x = x; }
+	function Resolved(x){ 
+		this.x = x; 
+	}
+
+	Resolved.prototype = {
+		foreignRebindAdapter: function( def, fThen ) {
+			fThen.call( this.x, def.resolve.bind(def), def.reject.bind(def), def.progress.bind(def) );
+		}
+	}
 
 	function Rejected(x,cancel){ 
 		this.x = x; 
 		if( cancel ) this.cancel = cancel;
 	}
 
-	function Progress(x){ this.x = x; }
+	Rejected.prototype = {
+		nativeRebindAdapter: function(val) {
+			if( val instanceof Progress ) 
+				return val;
+			else
+				return new Rejected(val.x);
+		},
+
+		foreignRebindAdapter: function( def, fThen ) {
+			fThen.call( this.x, def.reject.bind(def), def.reject.bind(def), def.progress.bind(def) );
+		}
+	}
+
+	function Progress(x){ 
+		this.x = x; 
+	}
 
 	function CancelError(){}
 	CancelError.prototype = {
@@ -59,7 +82,9 @@
 			return this.then();
 		},
 		_rebind: function( val ) {
-			return val && val.x instanceof Promise && Micro.prototype.rebind.call(this.micro, val.x.micro);
+			var adapter;
+			return val && val.x instanceof Promise &&
+				   Micro.prototype.rebind.call(this.micro, val.x.micro, val.nativeRebindAdapter);
 		}
 	};
 
@@ -78,12 +103,12 @@
 	Deferred.prototype._rebind = function(val){
 		var	then;
 		return Promise.prototype._rebind.call(this, val) ||
-			val && val.x &&
+			val && val.x && 
+			val.foreignRebindAdapter &&
 			// both assignments below are intentional
 			(typeof (then = val.x.done) == "function" ||
-				typeof (then = val.x.then) == "function") &&
-			then.call(val.x, this.resolve.bind(this),
-				this.reject.bind(this), this.progress.bind(this));
+			 typeof (then = val.x.then) == "function") &&
+			( val.foreignRebindAdapter( this, then ), true );
 	};
 
 	// export

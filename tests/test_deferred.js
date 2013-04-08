@@ -371,6 +371,108 @@ function(module, unit, Deferred){
 				{text: "resolving a"},
 				{text: "callback 1: value"}
 			]
+		},
+		{
+			test: function test_def_reject_to_resolved(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("rejecting a");
+				a.reject( b );
+				t.info("resolving b");
+				b.resolve( "value" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "resolving b"},
+				{text: "errback: value"}
+			]
+		},
+		{
+			test: function test_def_reject_to_resolved_sync(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("resolving b");
+				b.resolve( "value" );
+				t.info("rejecting a");
+				a.reject( b );
+			},
+			logs: [
+				{text: "resolving b"},
+				{text: "rejecting a"},
+				{text: "errback: value"}
+			]
+		},
+		{
+			test: function test_def_reject_to_rejected(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("rejecting a");
+				a.reject( b );
+				t.info("rejecting b");
+				b.reject( "value" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "rejecting b"},
+				{text: "errback: value"}
+			]
+		},
+		{
+			test: function test_def_reject_to_rejected_sync(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("rejecting b");
+				b.reject( "value" );
+				t.info("rejecting a");
+				a.reject( b );
+			},
+			logs: [
+				{text: "rejecting b"},
+				{text: "rejecting a"},
+				{text: "errback: value"}
+			]
+		},
+		{
+			test: function test_def_resolve_to_rejected(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("resolving a");
+				a.resolve( b );
+				t.info("rejecting b");
+				b.reject( "value" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "rejecting b"},
+				{text: "errback: value"}
+			]
+		},
+		{
+			test: function test_def_resolve_to_rejected_sync(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.done( function(v){ t.info("callback: " + v); },
+						function(v){ t.info("errback: " + v); return v; } );
+				t.info("rejecting b");
+				b.reject( "value" );
+				t.info("resolving a");
+				a.resolve( b );
+			},
+			logs: [
+				{text: "rejecting b"},
+				{text: "resolving a"},
+				{text: "errback: value"}
+			]
 		}
 	]);
 

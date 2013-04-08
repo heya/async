@@ -21,12 +21,12 @@
 	Micro.prototype = {
 		declaredClass: "promise/micro/Micro",
 
-		rebind: function(val){
+		rebind: function(val,adapter){
 			if(!(val instanceof Micro))
 				return false;
 
-			if("value" in val || !val.addCallback(doNothing))
-				this.value = val.value; // Enter transitional state
+			if("value" in val || !val.addCallback(adapter||doNothing))
+				this.value = adapter ? adapter( val.value ) : val.value; // Enter transitional state
 			else
 				(this.parent = val.chain[val.chain.length-1])
 					.promise = this;
