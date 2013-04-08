@@ -43,18 +43,18 @@ other than for this performance optimization.
 Both ```then()``` and ```done()``` accept two separate callback functions intended to handle resolution and rejection
 respectively. By convention, the first one is called *callback* and the second one *errback*.
 
-#### Promise cancellation
+#### Native promise
+
+The implementation of a promise provided by Heya; provides additional functionality related to promise 
+*cancellation* and propagation of progress events. Any Heya API said to return a promise is guaranteed to return 
+a native promise object. Native promises should not be constructed directly; the native promise constructor is 
+available as ```Deferred.Promise``` only for the purposes of ```instanceof``` checks.
+
+##### Promise cancellation
 
 An unresolved promise may be *cancelled*, leading to its rejection; if the promise was obtained by chaining from another
 promise, the associated errback -- if any -- will be executed and so will be the parent promise in case it has no other
 dependendents.
-
-#### Native promise
-
-The implementation of a promise provided by Heya; provides additional functionality related to promise 
-cancellation and propagation of progress events. Any Heya API said to return a promise is guaranteed to return 
-a native promise object. Native promises should not be constructed directly; the native promise constructor is 
-available as ```Deferred.Promise``` only for the purposes of ```instanceof``` checks.
 
 #### Foreign promise
 
