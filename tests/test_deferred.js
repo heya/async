@@ -379,7 +379,7 @@ function(module, unit, Deferred){
 					c = a.then( b );
 
 				b.done(  function(v){ t.info("callback 1: " + v); },
-						 function(v){ t.info("errback 1: " + v); return v; } );
+						 function(v){ t.info("errback 1: " + v); throw v; } );
 				c.done(  function(v){ t.info("callback 2: " + v); },
 						 function(v){ t.info("errback 2: " + v); return v; } );
 
