@@ -262,8 +262,8 @@ function(module, unit, Deferred){
 				{text: "resolving b with a"},
 				{text: "canceling a"},
 				{text: "cancel 1: value"},
-				{text: "errback 1: value-x"},
-				{text: "errback 2: value-x"}
+				{text: "errback 1: value"},
+				{text: "errback 2: value"}
 			]
 		},
 		{

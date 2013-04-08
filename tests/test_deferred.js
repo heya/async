@@ -85,27 +85,6 @@ function(module, unit, Deferred){
 				{text: "callback 2: value"}
 			]
 		},
-		{
-			test: function test_def_prog_can(t){
-				var a = new Deferred(function(v){ return v + " " + 2; });
-				defCallbacks(t, a).then(function(v){ t.info("extracted: " + v); });
-				t.info("progress 1");
-				a.progress(1);
-				t.info("progress 2");
-				a.progress(2);
-				t.info("canceling value");
-				a.cancel("value");
-			},
-			logs: [
-				{text: "progress 1"},
-				{text: "progback: 1"},
-				{text: "progress 2"},
-				{text: "progback: 2"},
-				{text: "canceling value"},
-				{text: "errback: value 2"},
-				{text: "extracted: value 2"}
-			]
-		},
 		// clones of micro tests
 		{
 			test: function test_def_then_resolve(t){
@@ -329,6 +308,18 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_then_cancel_no_errback(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
+				a.done( function(v){ t.info("callback: " + v); } );
+				t.info("cancelling a");
+				a.cancel( "stop" );
+			},
+			logs: [
+				{text: "cancelling a"},
+				{text: "cancelled: stop"}
+			]
+		},
+		{
 			test: function test_def_then_b_then_cancel_a(t) {
 				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
 				a.then( function(v){ t.info("callback 1: " + v); },
@@ -380,7 +371,7 @@ function(module, unit, Deferred){
 				{text: "resolving a"},
 				{text: "callback 1: value"}
 			]
-		}		
+		}
 	]);
 
 	return {};

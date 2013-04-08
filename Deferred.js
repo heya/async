@@ -3,7 +3,12 @@
 	"use strict";
 
 	function Resolved(x){ this.x = x; }
-	function Rejected(x){ this.x = x; }
+
+	function Rejected(x,cancel){ 
+		this.x = x; 
+		if( cancel ) this.cancel = cancel;
+	}
+
 	function Progress(x){ this.x = x; }
 
 	function CancelError(){}
@@ -22,10 +27,9 @@
 		cancel: function(reason){
 			if(this.canceler){
 				try{
-					var r = this.canceler(reason);
-					if(typeof r != "undefined"){ reason = r; }
+					this.canceler(reason);
 				}catch(e){
-					reason = e;
+					throw e; // ice.uncaught( e );
 				}
 			}
 		
@@ -33,7 +37,7 @@
 				reason = new CancelError();
 
 			Micro.prototype.cancel.call(this.micro,reason);
-			this.micro.resolve(new Rejected(reason));
+			this.micro.resolve(new Rejected(reason,true));
 			this.canceled = true;
 		},
 		then: function(callback, errback, progback){
@@ -118,7 +122,7 @@
 				}
 			}
 
-			if( err )
+			if( err && !val.cancel )
 				throw err; // ice.uncaught( err );
 			else
 				return val;
