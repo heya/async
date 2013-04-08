@@ -78,7 +78,7 @@
 				this.micro.done(makeMultiplexer(callback, errback, progback));
 		},
 		protect: function() {
-			this.done();
+			this.done( null, function(){return false;} );
 			return this.then();
 		},
 		_rebind: function( val ) {
@@ -134,7 +134,7 @@
 				return val;
 			}
 			var err, cb = val instanceof Resolved && callback ||
-					 	  val instanceof Rejected && (err = val.x, errback );
+					 	  val instanceof Rejected && (notLast || (err = val.x), errback );
 			if(cb){
 				try{
 					var v = cb(val.x);

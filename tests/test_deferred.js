@@ -373,6 +373,20 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_protect_reject(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
+				a.protect()
+					.done( function(v){ t.info("callback 1: " + v); },
+						   function(v){ t.info("errback 1: " + v); return v; } );
+				t.info("rejecting a");
+				a.reject( "error" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "errback 1: error"}
+			]
+		},
+		{
 			test: function test_def_then_def_cancel(t) {
 				var a = new Deferred( function(v){ t.info("cancelled a: " + v); } ),
 					b = new Deferred( function(v){ t.info("cancelled b: " + v); } ),
