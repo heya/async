@@ -88,16 +88,25 @@ Associates callback, errback and a progress handler with a promise; returns a de
 may be omitted or replaced with ```null```; calling ```then()``` without arguments simply issues a dependent promise
 without associating any callbacks.
 
+#### Callback
 
+A function that will be called in the event the promise is resolved, receiving the value (which is never another 
+promise) that it's been resolved to as its only argument. 
 
+#### Errback
+
+#### Progback
 
 ```
 var p = promise.then( deferred );
 ```
 
 Makes ```deferred```, which **must** be an instance of ```Deferred``` -- foreign implementations or dependent promises 
-are not accepted -- into a dependent promise, which it returns as the result. The canceller associated with the ```deferred``` 
-will never be called as it is no longer the root of the chain. The net effect of the sequence:
+are not accepted -- into a dependent promise, and returns it as the result. The canceller associated with the ```deferred``` 
+will never be called as it is no longer the root of the chain. Effects of calling ```resolve()``` or ```reject()``` on 
+```deferred``` after it's been passed into ```then()``` are unspecified.
+
+The net effect of the sequence:
 
 ```
 var deferred = new Deferred();
@@ -108,13 +117,10 @@ var p = promise.then( deferred );
 is equivalent to:
 
 ```
-var deferred = promise.then()
+var deferred = promise.then();
 // a sequence of calls to deferred.then() and deferred.done()
 var p = deferred;
 ```
-
-Effects of calling ```resolve()``` or ```reject()``` on ```deferred``` after it's been passed into ```then()``` are
-unspecified.
 
 ### ```done()```
 
