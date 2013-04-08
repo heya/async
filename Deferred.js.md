@@ -84,13 +84,37 @@ var p = promise.then(
 );
 ```
 
-or
+Associates callback, errback and a progress handler with a promise; returns a dependent promise. Any of the arguments
+may be omitted or replaced with ```null```; calling ```then()``` without arguments simply issues a dependent promise
+without associating any callbacks.
+
+
+
 
 ```
 var p = promise.then( deferred );
 ```
 
-Associates callback, errback and a progress handler with a promise; returns a dependent promise.
+Makes ```deferred```, which **must** be an instance of ```Deferred``` -- foreign implementations or dependent promises 
+are not accepted -- into a dependent promise, which it returns as the result. The canceller associated with the ```deferred``` 
+will never be called as it is no longer the root of the chain. The net effect of the sequence:
+
+```
+var deferred = new Deferred();
+// a sequence of calls to deferred.then() and deferred.done()
+var p = promise.then( deferred );
+```
+
+is equivalent to:
+
+```
+var deferred = promise.then()
+// a sequence of calls to deferred.then() and deferred.done()
+var p = deferred;
+```
+
+Effects of calling ```resolve()``` or ```reject()``` on ```deferred``` after it's been passed into ```then()``` are
+unspecified.
 
 ### ```done()```
 
@@ -108,8 +132,9 @@ or
 promise.done( deferred );
 ```
 
-Associates callback, errback and a progress handler with a promise; ends the promise chain. Rules regarding the
-arguments and their execution are identical to that of the ```then()``` method. 
+Fully identical to ```done()``` except that it does not return a dependent promise, making it a somewhat more efficient
+alternative when the dependent promise value is not needed. It is possible to call ```done()``` without arguments but the
+resulting sub-chain will not handle rejections and may cause uncaught exceptions should one occur.
 
 ### ```protect()```
 
@@ -152,15 +177,21 @@ Constructs a new, unresolved, Deferred object. The optional argument can be used
 will only be called in the event the Deferred is cancelled and will have a chance of prematurely terminating the asynchronous
 process that was supposed to resolve it in the first place.
 
-## ```resolve()```
+### ```resolve()```
 
 ```
 deferred.resolve( value_or_promise );
 ```
 
-## ```reject()```
+### ```reject()```
 
 ```
 deferred.reject( value_or_promise );
+```
+
+### ```progress()```
+
+```
+deferred.progress( value );
 ```
 
