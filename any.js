@@ -64,7 +64,7 @@
 				array.forEach(function(p, i){
 					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel(why);
+						p.cancel(why,true);
 					}
 				});
 			}
