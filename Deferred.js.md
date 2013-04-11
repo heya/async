@@ -191,7 +191,7 @@ or
 promise.done( deferred );
 ```
 
-Fully identical to ```done()``` except that it does not return a dependent promise, making it a somewhat more efficient
+Fully identical to ```then()``` except that it does not return a dependent promise, making it a somewhat more efficient
 alternative when the dependent promise value is not needed. It is possible to call ```done()``` without arguments but the
 resulting sub-chain will not handle rejections and may cause uncaught exceptions should one occur.
 
