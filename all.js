@@ -27,7 +27,7 @@
 					}
 				});
 			}else{
-				deferred.resolve(array);
+				deferred.resolve(array,true);
 			}
 
 			return deferred;
@@ -66,7 +66,6 @@
 	}
 
 	var all = impl(true);
-	all.exclusive = all;
 	all.inclusive = impl(false);
 
 	return all;

@@ -32,7 +32,7 @@
 					}
 				});
 			}else{
-				deferred.resolve(array[0]);
+				deferred.resolve(array[0],true);
 			}
 
 			return deferred;
