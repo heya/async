@@ -59,7 +59,7 @@ function(module, unit, Deferred){
 				a.then( function(v){ t.info("callback 1: " + v); },
 						function(v){ t.info("errback 1: " + v); } )
 				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); } );
+						function(v){ t.info("errback 2: " + v); return v; } );
 				t.info("rejecting error");
 				a.reject("error");
 			},
@@ -67,6 +67,23 @@ function(module, unit, Deferred){
 				{text: "rejecting error"},
 				{text: "errback 1: error"},
 				{text: "errback 2: error"}
+			]
+		},
+		{
+			test: function test_def_rej_pass_uncaught(t){
+				var a = new Deferred();
+				a.then( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); } )
+				 .done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("rejecting error");
+				a.reject("error");
+			},
+			logs: [
+				{text: "rejecting error"},
+				{text: "errback 1: error"},
+				{text: "errback 2: error"},
+				{text: "error", meta: { name: "error" } }
 			]
 		},
 		{
@@ -393,7 +410,7 @@ function(module, unit, Deferred){
 					c = a.then( b );
 
 				b.done(  function(v){ t.info("callback 1: " + v); },
-						 function(v){ t.info("errback 1: " + v); throw v; } );
+						 function(v){ t.info("errback 1: " + v); } );
 				c.done(  function(v){ t.info("callback 2: " + v); },
 						 function(v){ t.info("errback 2: " + v); return v; } );
 
@@ -465,7 +482,7 @@ function(module, unit, Deferred){
 				a.done( function(v){ t.info("callback: " + v); },
 						function(v){ t.info("errback: " + v); return v; } );
 				t.info("rejecting b");
-				b.reject( "value" );
+				b.reject( "value", true );
 				t.info("rejecting a");
 				a.reject( b );
 			},
@@ -499,7 +516,7 @@ function(module, unit, Deferred){
 				a.done( function(v){ t.info("callback: " + v); },
 						function(v){ t.info("errback: " + v); return v; } );
 				t.info("rejecting b");
-				b.reject( "value" );
+				b.reject( "value", true );
 				t.info("resolving a");
 				a.resolve( b );
 			},
