@@ -119,7 +119,7 @@ A function that will be called in the event the promise is resolved, receiving a
 another promise, that the promise has been resolved to. Resolving a promise executes all callbacks that's been associated with
 it through calls to ```then()``` and ```done()``` in a non-specified order. As a result of its execution, the callback may:
 
- Return a defined, non-promise value. In this case, the dependent promise (if any) will be resolved to this value.
+1. Return a defined, non-promise value. In this case, the dependent promise (if any) will be resolved to this value.
 1. Return an ```undefined``` value (or, equivalently, not return a value i.e. fall off the end or execute an empty ```return```). In
 this case, the dependent promise (if any) will be resolved to the same value as was passed into the callback.
 1. Return a promise value. In this case, the dependent promise (if any) will now be treated as a dependent of the returned
