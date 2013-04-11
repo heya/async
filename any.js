@@ -56,6 +56,7 @@
 						cancel(firstFailureConclusive ? err : new NotRequiredError(),index);
 						deferred.reject(err);
 					}
+					return false;
 				};
 			}
 
