@@ -119,15 +119,15 @@ A function that will be called in the event the promise is resolved, receiving a
 another promise, that the promise has been resolved to. Resolving a promise executes all callbacks that's been associated with
 it through calls to ```then()``` and ```done()``` in a non-specified order. As a result of its execution, the callback may:
 
-# Return a defined, non-promise value. In this case, the dependent promise (if any) will be resolved to this value.
-# Return an ```undefined``` value (or, equivalently, not return a value i.e. fall off the end or execute an empty ```return```). In
+ Return a defined, non-promise value. In this case, the dependent promise (if any) will be resolved to this value.
+1. Return an ```undefined``` value (or, equivalently, not return a value i.e. fall off the end or execute an empty ```return```). In
 this case, the dependent promise (if any) will be resolved to the same value as was passed into the callback.
-# Return a promise value. In this case, the dependent promise (if any) will now be treated as a dependent of the returned
+1. Return a promise value. In this case, the dependent promise (if any) will now be treated as a dependent of the returned
 promise, i.e. it will not be resolved or rejected immediately but only upon resolution or rejection of the promise returned
 by the callback.
-# Throw a non-promise value. In this case, the dependent promise will be rejected with this value. Note that throwing an exception
+1. Throw a non-promise value. In this case, the dependent promise will be rejected with this value. Note that throwing an exception
 creates a separately tracked rejection which, if unhandled, may cause an uncaught exception to be thrown.
-# Throw a promise value. In this case, the dependent promise will be rejected when the returned promise is **either resolved
+1. Throw a promise value. In this case, the dependent promise will be rejected when the returned promise is **either resolved
 or rejected**, with the value that the latter is resolved to or rejected with.
 
 If callback is not specified and the dependent promise exists, the latter is resolved to the same value as the argument that
@@ -141,9 +141,9 @@ promise executes all errbacks that's been associated with it through calls to ``
 
 The errback is executed in the same way as the callback with two important differences in treatment of its execution results:
 
-# Returning an ```undefined``` value by the errback will cause the dependent promise to be rejected with the same value as was
+1. Returning an ```undefined``` value by the errback will cause the dependent promise to be rejected with the same value as was
 passed into the errback. Errback returning ```undefined``` is not considered to have handled the rejection.
-# Any other result of errback's execution (even if it throws an exception of its own) is counted as handling the rejection.
+1. Any other result of errback's execution (even if it throws an exception of its own) is counted as handling the rejection.
 
 If errback is not specified and the dependent promise exists, the latter is rejected with the same value as the argument that
 the callback would have received.
