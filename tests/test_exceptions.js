@@ -277,6 +277,31 @@ function(module, unit, Deferred){
 				{text: "rejecting a"},
 				{text: "value", meta:{ name: "error" } }
 			]
+		},
+		{
+			test: function test_throw_promise(t) {
+				var a = new Deferred(),
+					b = new Deferred();
+				a.then( function(v){
+					t.info("callback 1: " + v);
+					throw b;
+				} )
+				.done( null, function(v){
+					t.info("errback 2: " + v);
+					return v;
+				} );
+
+				t.info( "resolving a" );
+				a.resolve( "value 1" );
+				t.info( "resolving b" );
+				b.resolve( "value 2" );
+			},
+			logs: [
+				{text: "resolving a"},
+				{text: "callback 1: value 1"},
+				{text: "resolving b"},
+				{text: "errback 2: value 2"}
+			]
 		}
 	]);
 
