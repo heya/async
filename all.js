@@ -27,7 +27,7 @@
 					}
 				});
 			}else{
-				deferred.resolve(array);
+				deferred.resolve(array,true);
 			}
 
 			return deferred;
@@ -58,7 +58,7 @@
 				array.forEach(function(p, i){
 					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel(why);
+						p.cancel(why, function(err){ throw err; } );
 					}
 				});
 			}
@@ -66,7 +66,6 @@
 	}
 
 	var all = impl(true);
-	all.exclusive = all;
 	all.inclusive = impl(false);
 
 	return all;

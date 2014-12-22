@@ -59,7 +59,7 @@ function(module, unit, Deferred){
 				a.then( function(v){ t.info("callback 1: " + v); },
 						function(v){ t.info("errback 1: " + v); } )
 				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); } );
+						function(v){ t.info("errback 2: " + v); return v; } );
 				t.info("rejecting error");
 				a.reject("error");
 			},
@@ -67,6 +67,23 @@ function(module, unit, Deferred){
 				{text: "rejecting error"},
 				{text: "errback 1: error"},
 				{text: "errback 2: error"}
+			]
+		},
+		{
+			test: function test_def_rej_pass_uncaught(t){
+				var a = new Deferred();
+				a.then( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); } )
+				 .done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); } );
+				t.info("rejecting error");
+				a.reject("error");
+			},
+			logs: [
+				{text: "rejecting error"},
+				{text: "errback 1: error"},
+				{text: "errback 2: error"},
+				{text: "error", meta: { name: "error" } }
 			]
 		},
 		{
@@ -373,6 +390,41 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_protect_reject(t) {
+				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
+				a.protect()
+					.done( function(v){ t.info("callback 1: " + v); },
+						   function(v){ t.info("errback 1: " + v); return v; } );
+				t.info("rejecting a");
+				a.reject( "error" );
+			},
+			logs: [
+				{text: "rejecting a"},
+				{text: "errback 1: error"}
+			]
+		},
+		{
+			test: function test_def_then_def_cancel(t) {
+				var a = new Deferred( function(v){ t.info("cancelled a: " + v); } ),
+					b = new Deferred( function(v){ t.info("cancelled b: " + v); } ),
+					c = a.then( b );
+
+				b.done(  function(v){ t.info("callback 1: " + v); },
+						 function(v){ t.info("errback 1: " + v); } );
+				c.done(  function(v){ t.info("callback 2: " + v); },
+						 function(v){ t.info("errback 2: " + v); return v; } );
+
+				t.info("cancelling c");
+				c.cancel( "stop" );
+			},
+			logs: [
+				{text: "cancelling c"},
+				{text: "cancelled a: stop"},
+				{text: "errback 1: stop"},
+				{text: "errback 2: stop"}
+			]
+		},
+		{
 			test: function test_def_reject_to_resolved(t) {
 				var a = new Deferred(),
 					b = new Deferred();
@@ -430,7 +482,7 @@ function(module, unit, Deferred){
 				a.done( function(v){ t.info("callback: " + v); },
 						function(v){ t.info("errback: " + v); return v; } );
 				t.info("rejecting b");
-				b.reject( "value" );
+				b.reject( "value", true );
 				t.info("rejecting a");
 				a.reject( b );
 			},
@@ -464,7 +516,7 @@ function(module, unit, Deferred){
 				a.done( function(v){ t.info("callback: " + v); },
 						function(v){ t.info("errback: " + v); return v; } );
 				t.info("rejecting b");
-				b.reject( "value" );
+				b.reject( "value", true );
 				t.info("resolving a");
 				a.resolve( b );
 			},

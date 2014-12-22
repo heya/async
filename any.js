@@ -32,7 +32,7 @@
 					}
 				});
 			}else{
-				deferred.resolve(array[0]);
+				deferred.resolve(array[0],true);
 			}
 
 			return deferred;
@@ -56,6 +56,7 @@
 						cancel(firstFailureConclusive ? err : new NotRequiredError(),index);
 						deferred.reject(err);
 					}
+					return false;
 				};
 			}
 
@@ -63,7 +64,7 @@
 				array.forEach(function(p, i){
 					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel(why);
+						p.cancel(why, function(err){ throw err; } );
 					}
 				});
 			}

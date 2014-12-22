@@ -2,8 +2,9 @@
 (["./Micro"], function(Micro){
 	"use strict";
 
-	function Resolved(x){ 
-		this.x = x; 
+	function Resolved(x,ctx){ 
+		this.x = x;
+		this.ctx = ctx;
 	}
 
 	Resolved.prototype = {
@@ -12,17 +13,18 @@
 		}
 	}
 
-	function Rejected(x,cancel){ 
+	function Rejected(x,ctx){ 
 		this.x = x; 
-		if( cancel ) this.cancel = cancel;
+		this.ctx = ctx;
+		ctx.push( this );
 	}
 
 	Rejected.prototype = {
 		nativeRebindAdapter: function(val) {
-			if( val instanceof Progress ) 
-				return val;
+			if( val instanceof Resolved )
+				return new Rejected(val.x,val.ctx);
 			else
-				return new Rejected(val.x);
+				return val;
 		},
 
 		foreignRebindAdapter: function( def, fThen ) {
@@ -42,27 +44,34 @@
 	function Promise(micro){
 		this.micro = micro;
 		micro.rebind = this._rebind.bind(this);
-		micro.cancel = this.cancel.bind(this);
+		micro.cancel = this._cancel.bind(this);
 	}
 
 	Promise.prototype = {
 		declaredClass: "promise/main/Promise",
-		cancel: function(reason){
+
+		_cancel: function( errVal ) {
 			if(this.canceler){
 				try{
-					this.canceler(reason);
+					this.canceler(errVal.x);
 				}catch(e){
-					throw e; // ice.uncaught( e );
+					new Rejected( e, errVal.ctx );
 				}
 			}
-		
-			if(typeof reason == "undefined")
-				reason = new CancelError();
-
-			Micro.prototype.cancel.call(this.micro,reason);
-			this.micro.resolve(new Rejected(reason,true));
+			
+			var ctx = [];
+			Micro.prototype.cancel.call( this.micro, new Rejected( errVal.x, ctx ) );
+			errVal.ctx.push.apply( errVal.ctx, ctx.slice(1) );
+			this.micro.resolve( errVal );
 			this.canceled = true;
 		},
+
+		cancel: function(reason,uncaught){
+			var ctx = [];
+			this._cancel( new Rejected( typeof reason === "undefined" ? new CancelError() : reason, ctx ) );
+			processUncaught( ctx.slice(1), uncaught );
+		},
+
 		then: function(callback, errback, progback){
 			if(callback && callback instanceof Deferred){
 				var r = this.then();
@@ -82,9 +91,13 @@
 			return this.then();
 		},
 		_rebind: function( val ) {
-			var adapter;
-			return val && val.x instanceof Promise &&
-				   Micro.prototype.rebind.call(this.micro, val.x.micro, val.nativeRebindAdapter);
+			if( val && val.x instanceof Promise &&
+				Micro.prototype.rebind.call(this.micro, val.x.micro, val.nativeRebindAdapter) ) {
+				if( val instanceof Rejected )
+					val.handled = true;
+				return true;
+			}
+			return false;
 		}
 	};
 
@@ -97,8 +110,8 @@
 	Deferred.prototype.declaredClass = "promise/main/Deferred";
 
 	Deferred.prototype.resolve  = makeResolver(Resolved);
-	Deferred.prototype.reject   = makeResolver(Rejected);
 	Deferred.prototype.progress = makeResolver(Progress);
+	Deferred.prototype.reject = makeResolver(Rejected);
 
 	Deferred.prototype._rebind = function(val){
 		var	then;
@@ -124,7 +137,8 @@
 		callback = typeof callback == "function" && callback;
 		errback  = typeof errback  == "function" && errback;
 		progback = typeof progback == "function" && progback;
-		return function(val,notLast){
+		return function(val){
+
 			if(val instanceof Progress){
 				if(progback){
 					try{
@@ -132,34 +146,54 @@
 					}catch(e){}	// suppress
 				}
 				return val;
-			}
-			var err, cb = val instanceof Resolved && callback ||
-					 	  val instanceof Rejected && (err = val.x, errback );
+			} else
+
+			var cb = val instanceof Resolved && callback ||
+				 	 val instanceof Rejected && errback;
 			if(cb){
 				try{
 					var v = cb(val.x);
-					return typeof v == "undefined" ? val : new Resolved(v);
+					if( typeof v != "undefined" ) {
+						if( val instanceof Rejected )
+							val.handled = true;
+						return new Resolved(v);
+					}
 				}catch(e){
-					if( notLast )
-						return new Rejected(e);
-					else
-						err = e;
+					if( val instanceof Rejected )
+						val.handled = true;
+					return new Rejected(e, val.ctx);
 				}
 			}
 
-			if( err && !val.cancel )
-				throw err; // ice.uncaught( err );
-			else
-				return val;
+			return val;
 		};
 	}
 
-	function makeResolver(Type){
-		var isEvent = Type === Progress;
-		return function(val){
-			if(!this.canceled){
-				this.micro.resolve(new Type(val), isEvent);
+	function makeResolver(Type) {
+		return Type === Progress ?
+			function(val) {
+				if(!this.canceled)
+					this.micro.resolve(new Progress(val), true);
 			}
-		};
+		:
+			function(val,uncaught){
+				if(!this.canceled) {
+					var ctx = [];
+					this.micro.resolve(new Type(val,ctx));
+					processUncaught(ctx,uncaught);
+				}
+			}
+	}
+
+	function processUncaught(ctx,uncaught) {
+		if( typeof uncaught !== "function" )
+			uncaught = uncaught ? function(){} : uncaughtHandler;
+		for( var i=0; i<ctx.length; ++i )
+			if( !ctx[i].handled )
+				uncaught( ctx[i].x );
+	}
+
+	function uncaughtHandler(val) {
+		throw val; // ice.uncaught()
 	}
 });
