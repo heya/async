@@ -1,6 +1,6 @@
 {
   "name": "heya-async",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Asynchronous utilities: promises, deferreds.",
   "directories": {
     "test": "tests"
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/heya/promise.git"
+    "url": "git://github.com/heya/async.git"
   },
   "keywords": [
     "asynchronous",
