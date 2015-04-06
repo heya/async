@@ -1,4 +1,10 @@
-# Primitives for asynchronous execution [![Build Status](https://travis-ci.org/heya/async.png?branch=master)](https://travis-ci.org/heya/async)
+# Async
+
+[![Build status][travis-image]][travis-url]
+[![Dependencies][deps-image]][deps-url]
+[![devDependencies][dev-deps-image]][dev-deps-url]
+[![NPM version][npm-image]][npm-url]
+
 
 Promises and operations over them; useful utility functions.
 
@@ -25,3 +31,11 @@ volo install heya/async heya-async
 * [Adaptor for values and foreign promise implementations](when.js.md)
 * [Wrapper for node.js APIs](promisify.js.md)
 
+[npm-image]:      https://img.shields.io/npm/v/heya-async.svg
+[npm-url]:        https://npmjs.org/package/heya-async
+[deps-image]:     https://img.shields.io/david/heya/async.svg
+[deps-url]:       https://david-dm.org/heya/async
+[dev-deps-image]: https://img.shields.io/david/dev/heya/async.svg
+[dev-deps-url]:   https://david-dm.org/heya/async#info=devDependencies
+[travis-image]:   https://img.shields.io/travis/heya/async.svg
+[travis-url]:     https://travis-ci.org/heya/async
