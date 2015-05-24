@@ -25,12 +25,12 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "progress 1"},
-				{text: "progback: 1"},
-				{text: "progress 2"},
-				{text: "progback: 2"},
-				{text: "resolving value"},
-				{text: "callback: value"}
+				"progress 1",
+				"progback: 1",
+				"progress 2",
+				"progback: 2",
+				"resolving value",
+				"callback: value"
 			]
 		},
 		{
@@ -45,61 +45,61 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "progress 1"},
-				{text: "progback: 1"},
-				{text: "progress 2"},
-				{text: "progback: 2"},
-				{text: "rejecting value"},
-				{text: "errback: value"}
+				"progress 1",
+				"progback: 1",
+				"progress 2",
+				"progback: 2",
+				"rejecting value",
+				"errback: value"
 			]
 		},
 		{
 			test: function test_def_rej_pass(t){
 				var a = new Deferred();
 				a.then( function(v){ t.info("callback 1: " + v); },
-						function(v){ t.info("errback 1: " + v); } )
-				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); return v; } );
+						function(v){ t.info("errback 1: " + v); }
+				).done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); return v; });
 				t.info("rejecting error");
 				a.reject("error");
 			},
 			logs: [
-				{text: "rejecting error"},
-				{text: "errback 1: error"},
-				{text: "errback 2: error"}
+				"rejecting error",
+				"errback 1: error",
+				"errback 2: error"
 			]
 		},
 		{
 			test: function test_def_rej_pass_uncaught(t){
 				var a = new Deferred();
 				a.then( function(v){ t.info("callback 1: " + v); },
-						function(v){ t.info("errback 1: " + v); } )
-				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); } );
+						function(v){ t.info("errback 1: " + v); }
+				).done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); });
 				t.info("rejecting error");
 				a.reject("error");
 			},
 			logs: [
-				{text: "rejecting error"},
-				{text: "errback 1: error"},
-				{text: "errback 2: error"},
-				{text: "error", meta: { name: "error" } }
+				"rejecting error",
+				"errback 1: error",
+				"errback 2: error",
+				{text: "error", meta: {name: "error"}}
 			]
 		},
 		{
 			test: function test_def_rej_res(t){
 				var a = new Deferred();
 				a.then( function(v){ t.info("callback 1: " + v); },
-						function(v){ t.info("errback 1: " + v); return "value"; } )
-				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); } );
+						function(v){ t.info("errback 1: " + v); return "value"; }
+				).done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); });
 				t.info("rejecting error");
 				a.reject("error");
 			},
 			logs: [
-				{text: "rejecting error"},
-				{text: "errback 1: error"},
-				{text: "callback 2: value"}
+				"rejecting error",
+				"errback 1: error",
+				"callback 2: value"
 			]
 		},
 		// clones of micro tests
@@ -111,8 +111,8 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback: value"}
+				"resolving",
+				"callback: value"
 			]
 		},
 		{
@@ -123,36 +123,36 @@ function(module, unit, Deferred){
 				a.then(function(v){ t.info("callback: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback: value"}
+				"resolving",
+				"callback: value"
 			]
 		},
 		{
 			test: function test_def_then2_resolve(t){
 				var a = new Deferred();
-				a.then(function(v){ t.info("callback 1: " + v); return v; })
-				 .then(function(v){ t.info("callback 2: " + v); });
+				a.then(function(v){ t.info("callback 1: " + v); return v; }).
+					then(function(v){ t.info("callback 2: " + v); });
 				t.info("resolving");
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
 			test: function test_def_then_pass(t){
 				var a = new Deferred();
-				a.then(function(v){ t.info("callback 1: " + v); })
-				 .done(function(v){ t.info("callback 2: " + v); });
+				a.then(function(v){ t.info("callback 1: " + v); }).
+					done(function(v){ t.info("callback 2: " + v); });
 				t.info("resolving");
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -164,9 +164,9 @@ function(module, unit, Deferred){
 					then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -179,9 +179,9 @@ function(module, unit, Deferred){
 				b.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "resolving b"},
-				{text: "callback: value"}
+				"resolving a",
+				"resolving b",
+				"callback: value"
 			]
 		},
 		{
@@ -195,10 +195,10 @@ function(module, unit, Deferred){
 				b.resolve("value 2");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value 1"},
-				{text: "resolving b"},
-				{text: "callback 2: value 2"}
+				"resolving a",
+				"callback 1: value 1",
+				"resolving b",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -212,10 +212,10 @@ function(module, unit, Deferred){
 				a.resolve("value 1");
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "resolving a"},
-				{text: "callback 1: value 1"},
-				{text: "callback 2: value 2"}
+				"resolving b",
+				"resolving a",
+				"callback 1: value 1",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -227,9 +227,9 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -241,9 +241,9 @@ function(module, unit, Deferred){
 				a.then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -257,10 +257,10 @@ function(module, unit, Deferred){
 				b.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "resolving b"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving a",
+				"resolving b",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -274,10 +274,10 @@ function(module, unit, Deferred){
 				a.resolve(b);
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving b",
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -290,10 +290,10 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"},
-				{text: "callback 3: value"}
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value",
+				"callback 3: value"
 			]
 		},
 		{
@@ -305,9 +305,9 @@ function(module, unit, Deferred){
 				b.done(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value 2"},
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -319,9 +319,9 @@ function(module, unit, Deferred){
 				a.cancel( "stop" );
 			},
 			logs: [
-				{text: "cancelling a"},
-				{text: "cancelled: stop"},
-				{text: "errback: stop"}
+				"cancelling a",
+				"cancelled: stop",
+				"errback: stop"
 			]
 		},
 		{
@@ -332,25 +332,25 @@ function(module, unit, Deferred){
 				a.cancel( "stop" );
 			},
 			logs: [
-				{text: "cancelling a"},
-				{text: "cancelled: stop"}
+				"cancelling a",
+				"cancelled: stop"
 			]
 		},
 		{
 			test: function test_def_then_b_then_cancel_a(t) {
 				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
 				a.then( function(v){ t.info("callback 1: " + v); },
-						function(v){ t.info("errback 1: " + v); } )
-				 .done( function(v){ t.info("callback 2: " + v); },
-						function(v){ t.info("errback 2: " + v); } );
+						function(v){ t.info("errback 1: " + v); }
+				).done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); });
 				t.info("cancelling a");
 				a.cancel( "stop" );
 			},
 			logs: [
-				{text: "cancelling a"},
-				{text: "cancelled: stop"},
-				{text: "errback 1: stop"},
-				{text: "errback 2: stop"}
+				"cancelling a",
+				"cancelled: stop",
+				"errback 1: stop",
+				"errback 2: stop"
 			]
 		},
 		{
@@ -364,10 +364,10 @@ function(module, unit, Deferred){
 				b.cancel( "stop" );
 			},
 			logs: [
-				{text: "cancelling b"},
-				{text: "cancelled: stop"},
-				{text: "errback 1: stop"},
-				{text: "errback 2: stop"}
+				"cancelling b",
+				"cancelled: stop",
+				"errback 1: stop",
+				"errback 2: stop"
 			]
 		},
 		{
@@ -383,24 +383,24 @@ function(module, unit, Deferred){
 				a.resolve( "value" );
 			},
 			logs: [
-				{text: "cancelling b"},
-				{text: "errback 2: stop"},
-				{text: "resolving a"},
-				{text: "callback 1: value"}
+				"cancelling b",
+				"errback 2: stop",
+				"resolving a",
+				"callback 1: value"
 			]
 		},
 		{
 			test: function test_def_protect_reject(t) {
 				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
 				a.protect()
-					.done( function(v){ t.info("callback 1: " + v); },
-						   function(v){ t.info("errback 1: " + v); return v; } );
+					.done(  function(v){ t.info("callback 1: " + v); },
+							function(v){ t.info("errback 1: " + v); return v; } );
 				t.info("rejecting a");
 				a.reject( "error" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "errback 1: error"}
+				"rejecting a",
+				"errback 1: error"
 			]
 		},
 		{
@@ -409,19 +409,19 @@ function(module, unit, Deferred){
 					b = new Deferred( function(v){ t.info("cancelled b: " + v); } ),
 					c = a.then( b );
 
-				b.done(  function(v){ t.info("callback 1: " + v); },
-						 function(v){ t.info("errback 1: " + v); } );
-				c.done(  function(v){ t.info("callback 2: " + v); },
-						 function(v){ t.info("errback 2: " + v); return v; } );
+				b.done( function(v){ t.info("callback 1: " + v); },
+						function(v){ t.info("errback 1: " + v); } );
+				c.done( function(v){ t.info("callback 2: " + v); },
+						function(v){ t.info("errback 2: " + v); return v; } );
 
 				t.info("cancelling c");
 				c.cancel( "stop" );
 			},
 			logs: [
-				{text: "cancelling c"},
-				{text: "cancelled a: stop"},
-				{text: "errback 1: stop"},
-				{text: "errback 2: stop"}
+				"cancelling c",
+				"cancelled a: stop",
+				"errback 1: stop",
+				"errback 2: stop"
 			]
 		},
 		{
@@ -436,9 +436,9 @@ function(module, unit, Deferred){
 				b.resolve( "value" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "resolving b"},
-				{text: "errback: value"}
+				"rejecting a",
+				"resolving b",
+				"errback: value"
 			]
 		},
 		{
@@ -453,9 +453,9 @@ function(module, unit, Deferred){
 				a.reject( b );
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "rejecting a"},
-				{text: "errback: value"}
+				"resolving b",
+				"rejecting a",
+				"errback: value"
 			]
 		},
 		{
@@ -470,9 +470,9 @@ function(module, unit, Deferred){
 				b.reject( "value" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "rejecting b"},
-				{text: "errback: value"}
+				"rejecting a",
+				"rejecting b",
+				"errback: value"
 			]
 		},
 		{
@@ -487,9 +487,9 @@ function(module, unit, Deferred){
 				a.reject( b );
 			},
 			logs: [
-				{text: "rejecting b"},
-				{text: "rejecting a"},
-				{text: "errback: value"}
+				"rejecting b",
+				"rejecting a",
+				"errback: value"
 			]
 		},
 		{
@@ -504,9 +504,9 @@ function(module, unit, Deferred){
 				b.reject( "value" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "rejecting b"},
-				{text: "errback: value"}
+				"resolving a",
+				"rejecting b",
+				"errback: value"
 			]
 		},
 		{
@@ -521,9 +521,9 @@ function(module, unit, Deferred){
 				a.resolve( b );
 			},
 			logs: [
-				{text: "rejecting b"},
-				{text: "resolving a"},
-				{text: "errback: value"}
+				"rejecting b",
+				"resolving a",
+				"errback: value"
 			]
 		}
 	]);

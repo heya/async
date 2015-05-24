@@ -23,15 +23,15 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -52,15 +52,15 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value-a"}
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value-a"
 			]
 		},
 		{
@@ -81,15 +81,15 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "rejecting a"},
-				{text: "errback 1: value"},
-				{text: "errback 2: value"}
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"rejecting a",
+				"errback 1: value",
+				"errback 2: value"
 			]
 		},
 		{
@@ -110,15 +110,15 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "rejecting a"},
-				{text: "errback 1: value"},
-				{text: "callback 2: value-a"}
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"rejecting a",
+				"errback 1: value",
+				"callback 2: value-a"
 			]
 		},
 		{
@@ -139,16 +139,16 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "rejecting a"},
-				{text: "errback 1: value"},
-				{text: "errback 2: value"},
-				{text: "value-b", meta:{ name: "error" } }
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"rejecting a",
+				"errback 1: value",
+				"errback 2: value",
+				{text: "value-b", meta: {name: "error"}}
 			]
 		},
 		{
@@ -169,16 +169,16 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "rejecting a"},
-				{text: "errback 1: value"},
-				{text: "errback 2: value-a"},
-				{text: "value-a-b", meta:{ name: "error" } }
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"rejecting a",
+				"errback 1: value",
+				"errback 2: value-a",
+				{text: "value-a-b", meta: {name: "error"}}
 			]
 		},
 		{
@@ -199,16 +199,16 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"},
-				{text: "value-b", meta:{ name: "error" } }
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value",
+				{text: "value-b", meta: {name: "error"}}
 			]
 		},
 		{
@@ -229,16 +229,16 @@ function(module, unit, Deferred){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "progress a"},
-				{text: "progback 1: v1"},
-				{text: "progback 2: v1"},
-				{text: "progress a"},
-				{text: "progback 1: v2"},
-				{text: "progback 2: v2"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "errback 2: value-a"},
-				{text: "value-a-b", meta:{ name: "error" } }
+				"progress a",
+				"progback 1: v1",
+				"progback 2: v1",
+				"progress a",
+				"progback 1: v2",
+				"progback 2: v2",
+				"resolving a",
+				"callback 1: value",
+				"errback 2: value-a",
+				{text: "value-a-b", meta: {name: "error"}}
 			]
 		},
 		{
@@ -259,11 +259,11 @@ function(module, unit, Deferred){
 				a.cancel("value");
 			},
 			logs: [
-				{text: "resolving b with a"},
-				{text: "canceling a"},
-				{text: "cancel 1: value"},
-				{text: "errback 1: value"},
-				{text: "errback 2: value"}
+				"resolving b with a",
+				"canceling a",
+				"cancel 1: value",
+				"errback 1: value",
+				"errback 2: value"
 			]
 		},
 		{
@@ -274,8 +274,8 @@ function(module, unit, Deferred){
 				a.reject("value");
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "value", meta:{ name: "error" } }
+				"rejecting a",
+				{text: "value", meta: {name: "error"}}
 			]
 		},
 		{
@@ -297,10 +297,10 @@ function(module, unit, Deferred){
 				b.resolve( "value 2" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value 1"},
-				{text: "resolving b"},
-				{text: "errback 2: value 2"}
+				"resolving a",
+				"callback 1: value 1",
+				"resolving b",
+				"errback 2: value 2"
 			]
 		}
 	]);

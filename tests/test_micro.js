@@ -13,8 +13,8 @@ function(module, unit, Micro){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback: value"}
+				"resolving",
+				"callback: value"
 			]
 		},
 		{
@@ -25,8 +25,8 @@ function(module, unit, Micro){
 				a.then(function(v){ t.info("callback: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback: value"}
+				"resolving",
+				"callback: value"
 			]
 		},
 		{
@@ -38,9 +38,9 @@ function(module, unit, Micro){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -52,9 +52,9 @@ function(module, unit, Micro){
 					then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -67,9 +67,9 @@ function(module, unit, Micro){
 				b.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "resolving b"},
-				{text: "callback: value"}
+				"resolving a",
+				"resolving b",
+				"callback: value"
 			]
 		},
 		{
@@ -83,10 +83,10 @@ function(module, unit, Micro){
 				b.resolve("value 2");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value 1"},
-				{text: "resolving b"},
-				{text: "callback 2: value 2"}
+				"resolving a",
+				"callback 1: value 1",
+				"resolving b",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -100,10 +100,10 @@ function(module, unit, Micro){
 				a.resolve("value 1");
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "resolving a"},
-				{text: "callback 1: value 1"},
-				{text: "callback 2: value 2"}
+				"resolving b",
+				"resolving a",
+				"callback 1: value 1",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -115,9 +115,9 @@ function(module, unit, Micro){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -129,9 +129,9 @@ function(module, unit, Micro){
 				a.then(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -145,10 +145,10 @@ function(module, unit, Micro){
 				b.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "resolving b"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving a",
+				"resolving b",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -162,10 +162,10 @@ function(module, unit, Micro){
 				a.resolve(b);
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving b",
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -178,10 +178,10 @@ function(module, unit, Micro){
 				a.resolve("value");
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"},
-				{text: "callback 3: value"}
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value",
+				"callback 3: value"
 			]
 		},
 		{
@@ -193,9 +193,9 @@ function(module, unit, Micro){
 				b.done(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value 2"},
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value 2"
 			]
 		},
 		{
@@ -207,8 +207,8 @@ function(module, unit, Micro){
 				a.resolve( b );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback: value"}
+				"resolving a",
+				"callback: value"
 			]
 		}
 	]);

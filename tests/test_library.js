@@ -19,9 +19,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				});
 			},
 			logs: [
-				{text: "starting"},
-				{text: "callback 1: 100"},
-				{text: "callback 2: 200"}
+				"starting",
+				"callback 1: 100",
+				"callback 2: 200"
 			]
 		},
 		{
@@ -83,13 +83,13 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 					a = new Deferred( function(v){ t.info( "cancelled: " + v ); } );
 
 				timeout.cancel( a, 300, "timeout" )
-					.then( function(v){ t.info( "callback: " + v ); },
-						   function(v){ t.info( "errback: " + v ); return v; } )
+					.then(function(v){ t.info( "callback: " + v ); },
+							function(v){ t.info( "errback: " + v ); return v; } )
 					.done( x.done.bind(x) );
 			},
 			logs: [
-				{text: "cancelled: timeout"},
-				{text: "errback: timeout"}
+				"cancelled: timeout",
+				"errback: timeout"
 			]
 		},
 		{
@@ -101,8 +101,8 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				x.resolve("value");
 			},
 			logs: [
-				{text: "resolving x"},
-				{text: "callback: value"}
+				"resolving x",
+				"callback: value"
 			]
 		},
 		{
@@ -114,8 +114,8 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				x.reject("value");
 			},
 			logs: [
-				{text: "rejecting x"},
-				{text: "errback: value"}
+				"rejecting x",
+				"errback: value"
 			]
 		},
 		function test_promisify(t){
@@ -146,8 +146,8 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 					.done( function(v){ t.info( "callback 2: " + v ); } );
 			},
 			logs: [
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -159,9 +159,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				a.resolve( "value" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback 1: value"},
-				{text: "callback 2: value"}
+				"resolving a",
+				"callback 1: value",
+				"callback 2: value"
 			]
 		},
 		{
@@ -170,7 +170,7 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 					.done( function(v) { t.info( "callback: " + v.join(',') ); } );
 			},
 			logs: [
-				{text: "callback: value,"}
+				"callback: value,"
 			]
 		},
 		{
@@ -185,9 +185,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				a.resolve( "a" );
 			},
 			logs: [
-				{text: "resolving b"},
-				{text: "resolving a"},
-				{text: "callback: a,b"}
+				"resolving b",
+				"resolving a",
+				"callback: a,b"
 			]
 		},
 		{
@@ -195,15 +195,15 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred( function(v){ t.info( "cancelled a: " + v ); } ),
 					b = new Deferred();
 				all(a,b)
-					.done( function(v) { t.info( "callback: " + v.join(',') ); },
-						   function(err) { t.info( "errback: " + err ); return err; } );
+					.done(function(v) { t.info( "callback: " + v.join(',') ); },
+							function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 			},
 			logs: [
-				{text: "rejecting b"},
-				{text: "cancelled a: b"},
-				{text: "errback: b"}
+				"rejecting b",
+				"cancelled a: b",
+				"errback: b"
 			]
 		},
 		{
@@ -211,17 +211,17 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred(),
 					b = new Deferred();
 				all(a,b)
-					.done( function(v) { t.info( "callback: " + v.join(',') ); },
-						   function(err) { t.info( "errback: " + err ); return err; } );
+					.done(function(v) { t.info( "callback: " + v.join(',') ); },
+							function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "resolving a" );
 				a.resolve( "a" );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "rejecting b"},
-				{text: "errback: b"}
+				"resolving a",
+				"rejecting b",
+				"errback: b"
 			]
 		},
 		{
@@ -239,10 +239,10 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				c.cancel( "c" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "cancelling c"},
-				{text: "cancelled b: c"},
-				{text: "errback: c"}
+				"resolving a",
+				"cancelling c",
+				"cancelled b: c",
+				"errback: c"
 			]
 		},
 		{
@@ -257,9 +257,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				b.resolve( "b" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "resolving b"},
-				{text: "callback: a,b"}
+				"rejecting a",
+				"resolving b",
+				"callback: a,b"
 			]
 		},
 		{
@@ -267,17 +267,17 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred(),
 					b = new Deferred();
 				par(a,b)
-					.done( function(v) { t.info( "callback: " + v.join(',') ); },
-						   function(v) { t.info( "errback: " + v ); return v; } );
+					.done(function(v) { t.info( "callback: " + v.join(',') ); },
+							function(v) { t.info( "errback: " + v ); return v; } );
 				t.info( "rejecting a" );
 				a.reject( "a" );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "rejecting b"},
-				{text: "callback: a,b"}
+				"rejecting a",
+				"rejecting b",
+				"callback: a,b"
 			]
 		},
 		{
@@ -286,7 +286,7 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 					.done( function(v) { t.info( "callback: " + v ); } );
 			},
 			logs: [
-				{text: "callback: value"}
+				"callback: value"
 			]
 		},
 		{
@@ -299,9 +299,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				a.resolve( "a" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback: a"},
-				{text: "cancelling b: [Error: not required]"}
+				"resolving a",
+				"callback: a",
+				"cancelling b: [Error: not required]"
 			]
 		},
 		{
@@ -309,17 +309,17 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred(),
 					b = new Deferred();
 				any(a,b)
-					.done( function(v) { t.info( "callback: " + v ); },
-						   function(err) { t.info( "errback: " + err ); return err; } );
+					.done(function(v) { t.info( "callback: " + v ); },
+							function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 				t.info( "resolving a" );
 				a.resolve( "a" );
 			},
 			logs: [
-				{text: "rejecting b"},
-				{text: "resolving a"},
-				{text: "callback: a"}
+				"rejecting b",
+				"resolving a",
+				"callback: a"
 			]
 		},
 		{
@@ -327,17 +327,17 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred(),
 					b = new Deferred();
 				any(a,b)
-					.done( function(v) { t.info( "callback: " + v ); },
-						   function(err) { t.info( "errback: " + err ); return err; } );
+					.done(function(v) { t.info( "callback: " + v ); },
+							function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "rejecting a" );
 				a.reject( "a" );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "rejecting b"},
-				{text: "errback: b"}
+				"rejecting a",
+				"rejecting b",
+				"errback: b"
 			]
 		},
 		{
@@ -355,10 +355,10 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				c.cancel( "c" );
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "cancelling c"},
-				{text: "cancelled b: c"},
-				{text: "errback: c"}
+				"rejecting a",
+				"cancelling c",
+				"cancelled b: c",
+				"errback: c"
 			]
 		},
 		{
@@ -367,7 +367,7 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 					.done( function(v) { t.info( "callback: " + v ); } );
 			},
 			logs: [
-				{text: "callback: value"}
+				"callback: value"
 			]
 		},
 		{
@@ -380,9 +380,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				a.resolve( "a" );
 			},
 			logs: [
-				{text: "resolving a"},
-				{text: "callback: a"},
-				{text: "cancelling b: [Error: not required]"}
+				"resolving a",
+				"callback: a",
+				"cancelling b: [Error: not required]"
 			]
 		},
 		{
@@ -390,15 +390,15 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				var a = new Deferred( function(v){ t.info( "cancelling a: " + v ); } ),
 					b = new Deferred();
 				one(a,b)
-					.done( function(v) { t.info( "callback: " + v ); },
-						   function(err) { t.info( "errback: " + err ); return err; } );
+					.done(function(v) { t.info( "callback: " + v ); },
+							function(err) { t.info( "errback: " + err ); return err; } );
 				t.info( "rejecting b" );
 				b.reject( "b" );
 			},
 			logs: [
-				{text: "rejecting b"},
-				{text: "cancelling a: b"},
-				{text: "errback: b"}
+				"rejecting b",
+				"cancelling a: b",
+				"errback: b"
 			]
 		},
 		{
@@ -414,9 +414,9 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				a.reject("a");
 			},
 			logs: [
-				{text: "rejecting a"},
-				{text: "cancelled b: a"},
-				{text: "errback: a"}
+				"rejecting a",
+				"cancelled b: a",
+				"errback: a"
 			]
 		}
 	]);

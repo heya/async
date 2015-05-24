@@ -9,7 +9,7 @@
     "heya-ice": ">=0.1"
   },
   "devDependencies": {
-    "heya-unit": ">=0.1"
+    "heya-unit": ">=0.2"
   },
   "scripts": {
     "test": "node tests/tests.js"
