@@ -74,6 +74,9 @@
 			return this.then();
 		},
 		_rebind: function(val){
+			if(Micro.prototype.rebind.call(this.micro, val)){
+				return true;
+			}
 			if(val && val.x instanceof Promise &&
 					Micro.prototype.rebind.call(this.micro, val.x.micro, val.nativeRebindAdapter)){
 				if(val instanceof Rejected){
@@ -156,6 +159,14 @@
 					if(typeof v != "undefined"){
 						if(val instanceof Rejected){
 							val.handled = true;
+						}
+						if(v instanceof Promise){
+							return v.micro;
+						}
+						if(v && typeof v.then == "function"){
+							var d = new Deferred();
+							d.resolve(v);
+							return d.micro;
 						}
 						return new Resolved(v);
 					}
