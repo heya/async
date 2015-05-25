@@ -1,7 +1,7 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
 (["module", "heya-unit", "../Deferred",
-	"../all", "../any", "../par", "../one", "../when", "../timeout"],
-function(module, unit, Deferred, all, any, par, one, when, timeout){
+	"../all", "../any", "../par", "../one", "../seq", "../when", "../whenDone", "../timeout"],
+function(module, unit, Deferred, all, any, par, one, seq, when, whenDone, timeout){
 	"use strict";
 
 	unit.add(module, [
@@ -142,8 +142,8 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 		},
 		{
 			test: function test_when_value(t) {
-				when( "value", function(v){ t.info( "callback 1: " + v ); } )
-					.done( function(v){ t.info( "callback 2: " + v ); } );
+				when("value", function(v){ t.info("callback 1: " + v); })
+					.done(function(v){ t.info("callback 2: " + v); });
 			},
 			logs: [
 				"callback 1: value",
@@ -153,15 +153,35 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 		{
 			test: function test_when_promise(t) {
 				var a = new Deferred();
-				when( a, function(v){ t.info( "callback 1: " + v ); } )
-					.done( function(v){ t.info( "callback 2: " + v ); } );
-				t.info( "resolving a" );
-				a.resolve( "value" );
+				when(a, function(v){ t.info("callback 1: " + v); })
+					.done(function(v){ t.info("callback 2: " + v); });
+				t.info("resolving a");
+				a.resolve("value");
 			},
 			logs: [
 				"resolving a",
 				"callback 1: value",
 				"callback 2: value"
+			]
+		},
+		{
+			test: function test_whenDone_value(t) {
+				when("value", function(v){ t.info("callback 1: " + v); });
+			},
+			logs: [
+				"callback 1: value"
+			]
+		},
+		{
+			test: function test_whenDone_promise(t) {
+				var a = new Deferred();
+				when(a, function(v){ t.info("callback 1: " + v); });
+				t.info("resolving a");
+				a.resolve("value");
+			},
+			logs: [
+				"resolving a",
+				"callback 1: value"
 			]
 		},
 		{
@@ -417,6 +437,48 @@ function(module, unit, Deferred, all, any, par, one, when, timeout){
 				"rejecting a",
 				"cancelled b: a",
 				"errback: a"
+			]
+		},
+		{
+			test: function test_seq_resolve_ab(t){
+				var a = seq(
+						function(v){ t.info("callback 1: " + v); return b; },
+						function(v){ t.info("callback 2: " + v); }
+					),
+					b = new Deferred();
+				t.info("resolving a");
+				a.begin.resolve("value 1");
+				t.info("resolving b");
+				b.resolve("value 2");
+				a.end.done(function(v){ t.info("callback 3: " + v); });
+			},
+			logs: [
+				"resolving a",
+				"callback 1: value 1",
+				"resolving b",
+				"callback 2: value 2",
+				"callback 3: value 2"
+			]
+		},
+		{
+			test: function test_seq_resolve_ba(t){
+				var a = seq(
+						function(v){ t.info("callback 1: " + v); return b; },
+						function(v){ t.info("callback 2: " + v); }
+					),
+					b = new Deferred();
+				a.end.done(function(v){ t.info("callback 3: " + v); });
+				t.info("resolving b");
+				b.resolve("value 2");
+				t.info("resolving a");
+				a.begin.resolve("value 1");
+			},
+			logs: [
+				"resolving b",
+				"resolving a",
+				"callback 1: value 1",
+				"callback 2: value 2",
+				"callback 3: value 2"
 			]
 		}
 	]);

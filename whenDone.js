@@ -2,7 +2,7 @@
 (["./Deferred"], function(Deferred){
 	"use strict";
 
-	return function when(value, callback, errback, progback){
+	return function whenDone(value, callback, errback, progback){
 		var deferred;
 		if(value instanceof Deferred.Promise){
 			deferred = value;
@@ -10,6 +10,6 @@
 			deferred = new Deferred();
 			deferred.resolve(value);
 		}
-		return arguments.length > 1 ? deferred.then(callback, errback, progback) : deferred;
+		deferred.done(callback, errback, progback);
 	};
 });
