@@ -21,14 +21,10 @@
 
 	Rejected.prototype = {
 		nativeRebindAdapter: function(val){
-			if(val instanceof Resolved){
-				return new Rejected(val.x, val.ctx);
-			}
-			return val;
+			return val instanceof Resolved ? new Rejected(val.x, val.ctx) : val;
 		},
-
 		foreignRebindAdapter: function(def, fThen){
-			fThen.call( this.x, def.reject.bind(def), def.reject.bind(def), def.progress.bind(def) );
+			fThen.call(this.x, def.reject.bind(def), def.reject.bind(def), def.progress.bind(def));
 		}
 	}
 
@@ -50,28 +46,11 @@
 	Promise.prototype = {
 		declaredClass: "promise/main/Promise",
 
-		_cancel: function(errVal){
-			if(this.canceler){
-				try{
-					this.canceler(errVal.x);
-				}catch(e){
-					new Rejected(e, errVal.ctx);
-				}
-			}
-
-			var ctx = [];
-			Micro.prototype.cancel.call(this.micro, new Rejected(errVal.x, ctx));
-			errVal.ctx.push.apply(errVal.ctx, ctx.slice(1));
-			this.micro.resolve(errVal);
-			this.canceled = true;
-		},
-
 		cancel: function(reason, uncaught){
 			var ctx = [];
 			this._cancel(new Rejected(typeof reason === "undefined" ? new CancelError() : reason, ctx));
 			processUncaught(ctx.slice(1), uncaught);
 		},
-
 		then: function(callback, errback, progback){
 			if(callback && callback instanceof Deferred){
 				var r = this.then();
@@ -87,6 +66,18 @@
 				this.micro.done(makeMultiplexer(callback, errback, progback));
 			}
 		},
+		thenBoth: function(callback){
+			return this.then(callback, callback);
+		},
+		doneBoth: function(callback){
+			this.done(callback, callback);
+		},
+		"catch": function(errback){
+			return this.then(null, errback);
+		},
+		finalCatch: function(errback){
+			this.done(null, errback);
+		},
 		protect: function() {
 			this.done();
 			return this.then();
@@ -100,6 +91,21 @@
 				return true;
 			}
 			return false;
+		},
+		_cancel: function(errVal){
+			if(this.canceler){
+				try{
+					this.canceler(errVal.x);
+				}catch(e){
+					new Rejected(e, errVal.ctx);
+				}
+			}
+
+			var ctx = [];
+			Micro.prototype.cancel.call(this.micro, new Rejected(errVal.x, ctx));
+			errVal.ctx.push.apply(errVal.ctx, ctx.slice(1));
+			this.micro.resolve(errVal);
+			this.canceled = true;
 		}
 	};
 
@@ -116,13 +122,14 @@
 	Deferred.prototype.reject   = makeResolver(Rejected);
 
 	Deferred.prototype._rebind = function(val){
-		var	then;
-		return Promise.prototype._rebind.call(this, val) ||
-			val && val.x && val.foreignRebindAdapter &&
-			// both assignments below are intentional
-			(typeof (then = val.x.done) == "function" ||
-				typeof (then = val.x.then) == "function") &&
-			(val.foreignRebindAdapter(this, then), true);
+		if(Promise.prototype._rebind.call(this, val)){
+			return true;
+		}
+		if(val && val.x && typeof val.x.then == "function"){
+			val.foreignRebindAdapter(this, typeof val.x.done == "function" ? val.x.done : val.x.then);
+			return true;
+		}
+		return false;
 	};
 
 	// export
@@ -138,6 +145,7 @@
 		callback = typeof callback == "function" && callback;
 		errback  = typeof errback  == "function" && errback;
 		progback = typeof progback == "function" && progback;
+
 		return function(val){
 			if(val instanceof Progress){
 				if(progback){
