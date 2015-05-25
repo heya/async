@@ -1,3 +1,5 @@
+"use strict";
+
 // this is node.js-specific module that follows convertNodeAsyncFunction() from:
 // https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
 
