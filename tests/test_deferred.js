@@ -311,6 +311,40 @@ function(module, unit, Deferred){
 			]
 		},
 		{
+			test: function test_def_resolve_a_then2_resolve_b(t){
+				var a = new Deferred(), b = new Deferred();
+				t.info("resolving a");
+				a.resolve("value 1");
+				a.then(function(v){ t.info("callback 1: " + v); return b; }).
+					then(function(v){ t.info("callback 2: " + v); });
+				t.info("resolving b");
+				b.resolve("value 2");
+			},
+			logs: [
+				"resolving a",
+				"callback 1: value 1",
+				"resolving b",
+				"callback 2: value 2"
+			]
+		},
+		{
+			test: function test_def_resolve_ab_then2(t){
+				var a = new Deferred(), b = new Deferred();
+				t.info("resolving a");
+				a.resolve("value 1");
+				t.info("resolving b");
+				b.resolve("value 2");
+				a.then(function(v){ t.info("callback 1: " + v); return b; }).
+					then(function(v){ t.info("callback 2: " + v); });
+			},
+			logs: [
+				"resolving a",
+				"resolving b",
+				"callback 1: value 1",
+				"callback 2: value 2"
+			]
+		},
+		{
 			test: function test_def_then_cancel(t) {
 				var a = new Deferred( function(v){ t.info("cancelled: " + v); } );
 				a.done( function(v){ t.info("callback: " + v); },
