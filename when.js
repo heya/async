@@ -7,9 +7,9 @@
 
 	return function when(value, callback, errback, progback){
 		var deferred;
-		if( value instanceof Deferred.Promise ) {
+		if(value instanceof Deferred.Promise){
 			deferred = value;
-		} else {
+		}else{
 			deferred = new Deferred();
 			deferred.resolve(value);
 		}

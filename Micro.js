@@ -21,15 +21,16 @@
 	Micro.prototype = {
 		declaredClass: "promise/micro/Micro",
 
-		rebind: function(val,adapter){
-			if(!(val instanceof Micro))
+		rebind: function(val, adapter){
+			if(!(val instanceof Micro)){
 				return false;
+			}
 
-			if("value" in val || !val.addCallback(adapter||doNothing))
-				this.value = adapter ? adapter( val.value ) : val.value; // Enter transitional state
-			else
-				(this.parent = val.chain[val.chain.length-1])
-					.promise = this;
+			if("value" in val || !val.addCallback(adapter || doNothing)){
+				this.value = adapter ? adapter(val.value) : val.value; // Enter transitional state
+			}else{
+				(this.parent = val.chain[val.chain.length - 1]).promise = this;
+			}
 
 			return true;
 		},
@@ -37,18 +38,19 @@
 		resolve: function(val, isEvent){
 			// ASSERT( state == P )
 			ice.assert(!("value" in this) && this.chain, "Promise cannot be resolved");
-			
-			if(!isEvent && this.rebind(val)) {
-				if("value" in this) {
+
+			if(!isEvent && this.rebind(val)){
+				if("value" in this){
 					val = this.value;	// Exit transitional state
 					delete this.value;
-				} else {
+				}else{
 					return;
 				}
 			}
 
-			for(var i = 0; i < this.chain.length; ++i)
+			for(var i = 0; i < this.chain.length; ++i){
 				this.chain[i].resolve(val, isEvent);
+			}
 
 			if(!isEvent){
 				// state: P/P' -> R
@@ -73,8 +75,8 @@
 		},
 
 		addCallback: function(cb){
-			if(!this.chain) {
-				ice.assert( "parent" in this, "Malformed promise state" );
+			if(!this.chain){
+				ice.assert("parent" in this, "Malformed promise state");
 
 				if("value" in this.parent){
 					// state: W -> R
@@ -92,16 +94,17 @@
 			return true;
 		},
 
-		cancel: function( arg ) {
-			if( this.parent ) {
+		cancel: function(arg){
+			if(this.parent){
 				delete this.parent.promise;
-				if( this.parent.parent.chain.length == 1 )
-					this.parent.parent.cancel( arg );
+				if(this.parent.parent.chain.length == 1){
+					this.parent.parent.cancel(arg);
+				}
 			}
 		}
 	};
 
-	function Callback(cb,parent){
+	function Callback(cb, parent){
 		this.callback = cb;
 		this.parent = parent;
 	}
@@ -112,7 +115,7 @@
 			delete this.parent;
 			if(this.promise){
 				this.promise.resolve(val, isEvent);
-				if(!isEvent ){
+				if(!isEvent){
 					delete this.promise;
 				}
 			}else if(!isEvent){
@@ -123,5 +126,5 @@
 
 	return Micro;
 
-	function doNothing(v) { return v; }
+	function doNothing(v){ return v; }
 });

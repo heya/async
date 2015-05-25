@@ -9,30 +9,29 @@
 		toString: function(){ return "[Error: not required]" }
 	}
 
-	function impl(firstFailureConclusive) {
+	function impl(firstFailureConclusive){
 		return function any(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
 			var todo = array.reduce(function(count, p){
 					return count + (p && typeof p.then == "function" ? 1 : 0);
-				}, 0), resolved, 
-				deferred = new Deferred(
-					function(why) {
-						resolved = true;
-						cancel(why);
-					}
-			);
+				}, 0), resolved,
+				deferred = new Deferred(function(why) {
+					resolved = true;
+					cancel(why);
+				});
 
 			if(todo){
-				if( firstFailureConclusive )
+				if(firstFailureConclusive){
 					todo = 1;
+				}
 				array.forEach(function(p, i){
 					if(p && typeof p.then == "function"){
 						when(p, succeed(i), failed(i));
 					}
 				});
 			}else{
-				deferred.resolve(array[0],true);
+				deferred.resolve(array[0], true);
 			}
 
 			return deferred;
@@ -40,10 +39,10 @@
 			function succeed(index){
 				return function(value){
 					delete array[index];
-					if( !resolved ) {
+					if(!resolved) {
 						resolved = true;
 						deferred.resolve(value);
-						cancel(new NotRequiredError(),index);
+						cancel(new NotRequiredError(), index);
 					}
 				};
 			}
@@ -53,7 +52,7 @@
 					delete array[index];
 					if(!resolved && !--todo){
 						resolved = true;
-						cancel(firstFailureConclusive ? err : new NotRequiredError(),index);
+						cancel(firstFailureConclusive ? err : new NotRequiredError(), index);
 						deferred.reject(err);
 					}
 					return false;
@@ -64,7 +63,7 @@
 				array.forEach(function(p, i){
 					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel(why, function(err){ throw err; } );
+						p.cancel(why, function(err){ throw err; });
 					}
 				});
 			}

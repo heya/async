@@ -12,12 +12,10 @@
 					return count + (p && typeof p.then == "function" ? 1 : 0);
 				}, 0),
 				once = true, cancelled,
-				deferred = new Deferred( 
-					function(why){ 
-						cancelled = true;
-						cancel(why);
-					}
-				), 
+				deferred = new Deferred(function(why){
+					cancelled = true;
+					cancel(why);
+				}),
 				failed = failOnError ? failOnce : succeed;
 
 			if(todo){
@@ -47,8 +45,9 @@
 					if(once){
 						once = false;
 						cancel(error,index);
-						if( !cancelled )
+						if(!cancelled){
 							deferred.reject(error);
+						}
 					}
 					return false;
 				};
@@ -58,7 +57,7 @@
 				array.forEach(function(p, i){
 					if(i !== index && p && typeof p.then == "function" &&
 							typeof p.cancel == "function"){
-						p.cancel(why, function(err){ throw err; } );
+						p.cancel(why, function(err){ throw err; });
 					}
 				});
 			}
