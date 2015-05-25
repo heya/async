@@ -7,12 +7,6 @@
 		this.ctx = ctx;
 	}
 
-	Resolved.prototype = {
-		foreignRebindAdapter: function(def, fThen){
-			fThen.call(this.x, def.resolve.bind(def), def.reject.bind(def), def.progress.bind(def));
-		}
-	}
-
 	function Rejected(x, ctx){
 		this.x = x;
 		this.ctx = ctx;
@@ -22,9 +16,6 @@
 	Rejected.prototype = {
 		nativeRebindAdapter: function(val){
 			return val instanceof Resolved ? new Rejected(val.x, val.ctx) : val;
-		},
-		foreignRebindAdapter: function(def, fThen){
-			fThen.call(this.x, def.reject.bind(def), def.reject.bind(def), def.progress.bind(def));
 		}
 	}
 
@@ -126,7 +117,8 @@
 			return true;
 		}
 		if(val && val.x && typeof val.x.then == "function"){
-			val.foreignRebindAdapter(this, typeof val.x.done == "function" ? val.x.done : val.x.then);
+			val.x[typeof val.x.done == "function" ? "done" : "then"]
+				(this.resolve.bind(this), this.reject.bind(this), this.progress.bind(this));
 			return true;
 		}
 		return false;
