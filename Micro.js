@@ -89,8 +89,7 @@
 				this.parent.promise = this;
 				this.chain = [];
 			}
-
-			this.chain.push(new Callback(cb,this));
+			this.chain.push(new Callback(cb, this));
 			return true;
 		},
 
