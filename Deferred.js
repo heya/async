@@ -17,7 +17,7 @@
 		nativeRebindAdapter: function(val){
 			return val instanceof Resolved ? new Rejected(val.x, val.ctx) : val;
 		}
-	}
+	};
 
 	function Progress(x){
 		this.x = x;
@@ -25,8 +25,8 @@
 
 	function CancelError(){}
 	CancelError.prototype = {
-		toString: function(){ return "[Error: cancelled]" }
-	}
+		toString: function(){ return "[Error: cancelled]"; }
+	};
 
 	function Promise(micro){
 		this.micro = micro;
@@ -35,7 +35,7 @@
 	}
 
 	Promise.prototype = {
-		declaredClass: "promise/main/Promise",
+		declaredClass: "heya-async/Deferred/Promise",
 
 		cancel: function(reason, uncaught){
 			var ctx = [];
@@ -109,7 +109,7 @@
 		this.canceler = canceler;
 	}
 	Deferred.prototype = Object.create(Promise.prototype);
-	Deferred.prototype.declaredClass = "promise/main/Deferred";
+	Deferred.prototype.declaredClass = "heya-async/Deferred";
 
 	Deferred.prototype.resolve  = makeResolver(Resolved);
 	Deferred.prototype.progress = makeResolver(Progress);

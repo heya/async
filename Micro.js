@@ -19,7 +19,7 @@
 	}
 
 	Micro.prototype = {
-		declaredClass: "promise/micro/Micro",
+		declaredClass: "heya-async/Micro",
 
 		rebind: function(val, adapter){
 			if(!(val instanceof Micro)){
