@@ -215,15 +215,16 @@
 				"callback 1: value",
 				"callback 2: value"
 			]
-		}
-/*
+		},
 		{
 			test: function test_def_resolve_then2(t){
-				var a = new Deferred();
-				t.info("resolving");
-				a.resolve("value");
+				var x = t.startAsync("async");
+				var a = new PromiseShim(function(resolve){
+						t.info("resolving");
+						resolve("value");
+					});
 				a.then(function(v){ t.info("callback 1: " + v); return v; }).
-				then(function(v){ t.info("callback 2: " + v); });
+					then(function(v){ t.info("callback 2: " + v); x.done(); });
 			},
 			logs: [
 				"resolving",
@@ -233,12 +234,20 @@
 		},
 		{
 			test: function test_def_then_resolve_ab(t){
-				var a = new Deferred(), b = new Deferred();
-				a.then(function(v){ t.info("callback: " + v); });
-				t.info("resolving a");
-				a.resolve(b);
-				t.info("resolving b");
-				b.resolve("value");
+				var x = t.startAsync("async");
+				var a = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving a");
+							resolve(b);
+						});
+					}),
+					b = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving b");
+							resolve("value");
+						});
+					});
+				a.then(function(v){ t.info("callback: " + v); x.done(); });
 			},
 			logs: [
 				"resolving a",
@@ -248,13 +257,21 @@
 		},
 		{
 			test: function test_def_then2_resolve_ab(t){
-				var a = new Deferred(), b = new Deferred();
+				var x = t.startAsync("async");
+				var a = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving a");
+							resolve("value 1");
+						});
+					}),
+					b = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving b");
+							resolve("value 2");
+						});
+					});
 				a.then(function(v){ t.info("callback 1: " + v); return b; }).
-				then(function(v){ t.info("callback 2: " + v); });
-				t.info("resolving a");
-				a.resolve("value 1");
-				t.info("resolving b");
-				b.resolve("value 2");
+					then(function(v){ t.info("callback 2: " + v); x.done(); });
 			},
 			logs: [
 				"resolving a",
@@ -265,13 +282,21 @@
 		},
 		{
 			test: function test_def_then2_resolve_ba(t){
-				var a = new Deferred(), b = new Deferred();
+				var x = t.startAsync("async");
+				var b = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving b");
+							resolve("value 2");
+						});
+					}),
+					a = new PromiseShim(function(resolve){
+						defer(function(){
+							t.info("resolving a");
+							resolve("value 1");
+						});
+					});
 				a.then(function(v){ t.info("callback 1: " + v); return b; }).
-				then(function(v){ t.info("callback 2: " + v); });
-				t.info("resolving b");
-				b.resolve("value 2");
-				t.info("resolving a");
-				a.resolve("value 1");
+					then(function(v){ t.info("callback 2: " + v); x.done(); });
 			},
 			logs: [
 				"resolving b",
@@ -279,7 +304,8 @@
 				"callback 1: value 1",
 				"callback 2: value 2"
 			]
-		},
+		}
+/*
 		{
 			test: function test_def_par_then2_resolve(t){
 				var a = new Deferred();
