@@ -1,0 +1,33 @@
+{
+  "name": "heya-async",
+  "description": "Asynchronous utilities: promises, deferreds.",
+  "main": "",
+  "authors": [
+    "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://lazutkin.com/)",
+    "Max Motovilov <max@motovilov.com>"
+  ],
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "asynchronous",
+    "promise",
+    "promises",
+    "event",
+    "events",
+    "event-driven",
+    "programming",
+    "EDP"
+  ],
+  "homepage": "https://github.com/heya/async",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "experimental"
+  ]
+}
