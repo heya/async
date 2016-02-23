@@ -1,6 +1,6 @@
 {
   "name": "heya-async",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Asynchronous utilities: promises, deferreds.",
   "directories": {
     "test": "tests"
@@ -9,10 +9,12 @@
     "heya-ice": ">=0.1"
   },
   "devDependencies": {
+    "heya-globalize": "^1.0.3",
     "heya-unit": ">=0.2"
   },
   "scripts": {
-    "test": "node tests/tests.js"
+    "test": "node tests/tests.js",
+    "dist": "node node_modules/heya-globalize/index.js"
   },
   "repository": {
     "type": "git",
@@ -31,5 +33,9 @@
     "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://lazutkin.com/)",
     "Max Motovilov <max@motovilov.com>"
   ],
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "browserGlobals": {
+    "!root": "heya.async",
+    "heya-ice": "heya.ice"
+  }
 }
