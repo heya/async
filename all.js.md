@@ -19,6 +19,6 @@ will be returned.
 
 If any of the promises is rejected, the resulting promise will also be rejected. If a rejected promise is
 passsed in, the returned value will also be a rejected promise. In either case, any promises in the list
-that have not yet been resolved, will be cancelled with the reason taken from the rejection's value. If the 
+that have not yet been resolved, will be cancelled with the reason taken from the rejection's value. If the
 returned promise is cancelled, all as yet unresolved promises in the list are also cancelled with the same
 reason.
