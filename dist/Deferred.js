@@ -103,6 +103,8 @@
 		}
 	};
 
+	Promise.prototype.abort = Promise.prototype.cancel;
+
 	function Deferred(canceler){
 		// intentionally altering Promise constructor parameters
 		Promise.call(this, new Micro());
@@ -127,10 +129,30 @@
 		return false;
 	};
 
+	Deferred.resolve = function(val){
+		return new Deferred().resolve(val);
+	};
+
+	Deferred.reject = function(val){
+		return new Deferred().reject(val, true);
+	};
+
+	// standard wrapper
+
+	function Wrapper(executor){
+		var deferred = new Deferred();
+		executor(deferred.resolve.bind(deferred), deferred.reject.bind(deferred), function(cb){ deferred.canceler = cb; });
+		return deferred;
+	};
+	Wrapper.resolve = Deferred.resolve;
+	Wrapper.reject  = Deferred.reject;
+	Wrapper.Promise = Promise;
+
 	// export
 
 	Deferred.CancelError = CancelError;
 	Deferred.Promise = Promise;
+	Deferred.Wrapper = Wrapper;
 
 	return Deferred;
 
