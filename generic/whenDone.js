@@ -2,7 +2,7 @@
 ([], function(){
 	"use strict";
 
-	return function instrumentWhen(Deferred){
+	return function instrumentWhenDone(Deferred){
 		return function whenDone(value, callback, errback, progback){
 			var promise;
 			if(value && typeof value.then == "function"){
