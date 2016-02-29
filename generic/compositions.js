@@ -134,7 +134,8 @@
 			par: instrument(All, false, Deferred, when),
 			any: instrument(Any, false, Deferred, when),
 			one: race,
-			race: race
+			race: race,
+			when: when
 		};
 	};
 });
