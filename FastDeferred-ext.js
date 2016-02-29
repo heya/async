@@ -9,7 +9,6 @@
 	Deferred.any = algos.any;
 	Deferred.one = algos.one;
 	Deferred.race = algos.race;
-	Deferred.when = algos.when;
 
 	return Deferred;
 });
