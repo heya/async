@@ -1,5 +1,5 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["./Deferred","./one"], function(Deferred, one){
+([], function(){
 	"use strict";
 
 	function TimeoutError(ms){
@@ -9,35 +9,35 @@
 		toString: function(){ return "[Error: timed out]"; }
 	}
 
-	function actOn(verb, resolveToCons){
+	function actOn(P, verb, DefaultResolveTo){
 		return function(ms, resolveTo){
-			var handle = setTimeout(function(){
+			return new P(function(resolve, reject, cancel){
+				var handle = setTimeout(function(){
 					if(handle){
 						handle = null;
-						deferred[verb](typeof resolveTo !== "undefined"
-							? resolveTo : resolveToCons
-								? new resolveToCons(ms) : ms);
+						(verb === "resolve" ? resolve : reject)(
+							typeof resolveTo !== "undefined"
+							? resolveTo : DefaultResolveTo
+							? new DefaultResolveTo(ms) : ms);
 					}
-				}, Math.max(ms, 0)),
-				deferred = new Deferred(function(){
+				}, Math.max(ms, 0));
+				typeof cancel == "function" && cancel(function(){
 					if(handle){
 						clearTimeout(handle);
 						handle = null;
 					}
 				});
-			return deferred;
+			});
 		};
 	}
 
-	function cancelPromise(promise, ms, rejectWith){
-		return one(promise, timeout.reject(ms, rejectWith));
-	}
+	return function instrumentTimeout(Deferred){
+		var P = Deferred && Deferred.Wrapper || Promise;
 
-	var timeout = actOn("reject", TimeoutError);
+		var timeout = actOn(P, "reject", TimeoutError);
+		timeout.reject  = timeout;
+		timeout.resolve = actOn(P, "resolve");
 
-	timeout.reject  = timeout;
-	timeout.resolve = actOn("resolve");
-	timeout.cancel  = cancelPromise;
-
-	return timeout;
+		return timeout;
+	};
 });

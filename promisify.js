@@ -1,38 +1,38 @@
-"use strict";
+'use strict';
 
-// this is node.js-specific module that follows convertNodeAsyncFunction() from:
-// https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
+// follows https://github.com/heya/async/blob/master/promisify.js (under BSD license)
 
-var Deferred = require("./Deferred");
 
-function smartResult(deferred){
-	return function(error){
-		if(error){
-			deferred.reject(error);
-		}else{
-			deferred.resolve(arguments.length > 2 ?
+function smartResult (resolve, reject) {
+	return function (error) {
+		if (error) {
+			reject(error);
+		} else {
+			resolve(arguments.length > 2 ?
 				Array.prototype.slice.call(arguments, 1) : arguments[1]);
 		}
 	};
 }
 
-function arrayResult(deferred){
-	return function(error){
-		if(error){
-			deferred.reject(error);
-		}else{
-			deferred.resolve(Array.prototype.slice.call(arguments, 1));
+function arrayResult (resolve, reject) {
+	return function (error) {
+		if (error) {
+			reject(error);
+		} else {
+			resolve(Array.prototype.slice.call(arguments, 1));
 		}
 	};
 }
 
-module.exports = function promisify(fn, context, resultIsArray){
+function promisify(fn, context, resultIsArray, Deferred){
 	var getResult = resultIsArray ? arrayResult : smartResult;
 	return function(){
-		var deferred = new Deferred(),
-			args = Array.prototype.slice.call(arguments, 0);
-		args.push(getResult(deferred));
-		fn.apply(context, args);
-		return deferred;
+		var args = Array.prototype.slice.call(arguments, 0);
+		return new (Deferred && Deferred.Wrapper || Promise)(function(resolve, reject){
+			args.push(getResult(resolve, reject));
+			fn.apply(context, args);
+		});
 	};
-};
+}
+
+module.exports = promisify;
