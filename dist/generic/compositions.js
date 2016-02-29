@@ -1,5 +1,5 @@
-(function(_,f){window.heya.async.generic.compositions=f(window.heya.async.generic.when);})
-(["./when"], function(instrumentWhen){
+(function(_,f,g){g=window.heya.async;g=g.generic||(g.generic={});g.compositions=f(window.heya.async.when);})
+(["../when"], function(when){
 	"use strict";
 
 	// based on https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
@@ -45,9 +45,9 @@
 					resolve(this.array);
 				}
 				return value;
-			};
+			}.bind(this);
 		},
-		failOnce: function(index, reject){
+		failOnce: function(index, _, reject){
 			return function(error){
 				if(this.once){
 					this.once = false;
@@ -57,7 +57,7 @@
 					}
 				}
 				return false;
-			};
+			}.bind(this);
 		},
 		canceler: function(why){
 			this.cancelled = true;
@@ -84,9 +84,9 @@
 					resolve(value);
 					cancel(this.array, new NotRequiredError(), index);
 				}
-			};
+			}.bind(this);
 		},
-		failed: function(index, reject){
+		failed: function(index, _, reject){
 			return function(err){
 				delete this.array[index];
 				if(!this.resolved && !--this.todo){
@@ -95,7 +95,7 @@
 					reject(err);
 				}
 				return false;
-			};
+			}.bind(this);
 		},
 		canceler: function(why){
 			this.resolved = true;
@@ -103,23 +103,21 @@
 		}
 	};
 
-	function instrument(Type, flag, Deferred, when){
+	function instrument(Type, flag, Deferred){
 		return function(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
 			var type = new Type(array, flag),
-				succeed = type.succeed.bind(type),
-				failed  = type.failed.bind(type),
 				P = Deferred && Deferred.Wrapper || Promise;
 			return new P(function(resolve, reject, cancel){
 				if(type.todo){
 					array.forEach(function(p, i){
 						if(p && typeof p.then == "function"){
-							when(p, succeed(i, resolve), failed(i, reject));
+							when(p, Deferred).then(type.succeed(i, resolve, reject), type.failed(i, resolve, reject));
 						}
 					});
 				}else{
-					resolve(type.allResolved;
+					resolve(type.allResolved);
 				}
 				typeof cancel == "function" && cancel(type.canceler.bind(type));
 			});
@@ -127,15 +125,13 @@
 	}
 
 	return function(Deferred){
-		var when = instrumentWhen(Deferred),
-			race = instrument(Any, true,  Deferred, when);
+		var race = instrument(Any, true,  Deferred);
 		return {
-			all: instrument(All, true,  Deferred, when),
-			par: instrument(All, false, Deferred, when),
-			any: instrument(Any, false, Deferred, when),
+			all: instrument(All, true,  Deferred),
+			par: instrument(All, false, Deferred),
+			any: instrument(Any, false, Deferred),
 			one: race,
-			race: race,
-			when: when
+			race: race
 		};
 	};
 });

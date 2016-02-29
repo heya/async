@@ -1,6 +1,8 @@
-(function(_,f){window.heya.async.when=f(window.heya.async.Deferred,window.heya.async.generic.when);})
-(["./Deferred", "./generic/when"], function(Deferred, instrumentWhen){
+(function(_,f,g){g=window;g=g.heya||(g.heya={});g=g.async||(g.async={});g.when=f();})
+([], function(){
 	"use strict";
 
-	return instrumentWhen(Deferred);
+	return function when(value, Deferred){
+		return value && typeof value.then == "function" ? value : (Deferred || Promise).resolve(value);
+	};
 });
