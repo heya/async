@@ -2,7 +2,7 @@
   "name": "heya-async",
   "version": "1.0.0",
   "description": "Asynchronous utilities: promises, deferreds.",
-  "main.js": "std.js",
+  "main.js": "index.js",
   "directories": {
     "test": "tests"
   },
