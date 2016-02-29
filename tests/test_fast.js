@@ -74,14 +74,20 @@
 		},
 		{
 			test: function test_def_rej_pass_uncaught(t){
-				var a = new FastDeferred();
+				var a = new FastDeferred(),
+					old = FastDeferred.detectUncaught;
+				FastDeferred.detectUncaught = true;
 				a.promise.then(
 					function(v){ t.info("callback 1: " + v); return v; }
 				).done(
 					function(v){ t.info("callback 2: " + v); }
 				);
 				t.info("rejecting error");
-				a.reject("error");
+				try{
+					a.reject("error");
+				}finally{
+					FastDeferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"rejecting error",

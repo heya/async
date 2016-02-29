@@ -71,13 +71,19 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_def_rej_pass_uncaught(t){
-				var a = new Deferred();
+				var a = new Deferred(),
+					old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.then( function(v){ t.info("callback 1: " + v); },
 						function(v){ t.info("errback 1: " + v); }
 				).done( function(v){ t.info("callback 2: " + v); },
 						function(v){ t.info("errback 2: " + v); });
 				t.info("rejecting error");
-				a.reject("error");
+				try{
+					a.reject("error");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"rejecting error",

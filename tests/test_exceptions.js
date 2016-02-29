@@ -123,7 +123,9 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_native_deferreds_reject_throw(t){
-				var a = new Deferred(), b = new Deferred();
+				var a = new Deferred(), b = new Deferred(),
+					old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.done(function(v){ t.info("callback 1: " + v); return v + "-a"; },
 					function(v){ t.info("errback 1: " + v); return v + "-a"; },
 					function(v){ t.info("progback 1: " + v); return v + "-a"; });
@@ -136,7 +138,11 @@ function(module, unit, Deferred){
 				t.info("progress a");
 				a.progress("v2");
 				t.info("rejecting a");
-				a.reject("value");
+				try{
+					a.reject("value");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"progress a",
@@ -153,7 +159,9 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_native_deferreds_reject_seq_throw(t){
-				var a = new Deferred(), b = new Deferred();
+				var a = new Deferred(), b = new Deferred(),
+					old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.then(function(v){ t.info("callback 1: " + v); return v + "-a"; },
 						function(v){ t.info("errback 1: " + v); throw v + "-a"; },
 						function(v){ t.info("progback 1: " + v); return v + "-a"; }).
@@ -166,7 +174,11 @@ function(module, unit, Deferred){
 				t.info("progress a");
 				a.progress("v2");
 				t.info("rejecting a");
-				a.reject("value");
+				try{
+					a.reject("value");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"progress a",
@@ -183,7 +195,9 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_native_deferreds_resolve_throw(t){
-				var a = new Deferred(), b = new Deferred();
+				var a = new Deferred(), b = new Deferred(),
+					old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.done(function(v){ t.info("callback 1: " + v); },
 					function(v){ t.info("errback 1: " + v); throw v + "-a"; },
 					function(v){ t.info("progback 1: " + v); throw v + "-a"; });
@@ -196,7 +210,11 @@ function(module, unit, Deferred){
 				t.info("progress a");
 				a.progress("v2");
 				t.info("resolving a");
-				a.resolve("value");
+				try{
+					a.resolve("value");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"progress a",
@@ -213,7 +231,9 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_native_deferreds_resolve_seq_throw(t){
-				var a = new Deferred(), b = new Deferred();
+				var a = new Deferred(), b = new Deferred(),
+					old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.then(function(v){ t.info("callback 1: " + v); throw v + "-a"; },
 						function(v){ t.info("errback 1: " + v); throw v + "-a"; },
 						function(v){ t.info("progback 1: " + v); throw v + "-a"; }).
@@ -226,7 +246,11 @@ function(module, unit, Deferred){
 				t.info("progress a");
 				a.progress("v2");
 				t.info("resolving a");
-				a.resolve("value");
+				try{
+					a.resolve("value");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"progress a",
@@ -268,10 +292,15 @@ function(module, unit, Deferred){
 		},
 		{
 			test: function test_simple_reject(t){
-				var a = new Deferred();
+				var a = new Deferred(), old = Deferred.detectUncaught;
+				Deferred.detectUncaught = true;
 				a.done( function(v){ t.info( "callback: " + v ); } );
 				t.info("rejecting a");
-				a.reject("value");
+				try{
+					a.reject("value");
+				}finally{
+					Deferred.detectUncaught = old;
+				}
 			},
 			logs: [
 				"rejecting a",
