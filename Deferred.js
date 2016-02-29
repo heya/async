@@ -129,6 +129,8 @@
 		return false;
 	};
 
+	Deferred.detectUncaught = false;
+
 	Deferred.resolve = function(val){
 		return new Deferred().resolve(val);
 	};
@@ -210,13 +212,15 @@
 				if(!this.canceled){
 					this.micro.resolve(new Progress(val), true);
 				}
+				return this;
 			} :
 			function(val, uncaught){
 				if(!this.canceled){
 					var ctx = [];
 					this.micro.resolve(new Type(val, ctx));
-					processUncaught(ctx, uncaught);
+					Deferred.detectUncaught && processUncaught(ctx, uncaught);
 				}
+				return this;
 			};
 	}
 

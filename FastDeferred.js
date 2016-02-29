@@ -134,6 +134,8 @@
 		};
 	}
 
+	FastDeferred.detectUncaught = false;
+
 	FastDeferred.resolve = function(val){
 		return new FastDeferred().resolve(val).promise;
 	};
@@ -147,7 +149,7 @@
 	function Wrapper(executor){
 		var deferred = new FastDeferred();
 		executor(deferred.resolve.bind(deferred), deferred.reject.bind(deferred), function(cb){ deferred.promise.canceler = cb; });
-		return deferred;
+		return deferred.promise;
 	};
 	Wrapper.resolve = FastDeferred.resolve;
 	Wrapper.reject  = FastDeferred.reject;
@@ -213,7 +215,7 @@
 				if(!this.promise.canceled){
 					var ctx = [];
 					this.promise.micro.resolve(new Type(val instanceof FastDeferred ? val.promise : val, ctx));
-					processUncaught(ctx, uncaught);
+					FastDeferred.detectUncaught && processUncaught(ctx, uncaught);
 				}
 				return this;
 			};
