@@ -127,12 +127,14 @@
 	}
 
 	return function(Deferred){
-		var when = instrumentWhen(Deferred);
+		var when = instrumentWhen(Deferred),
+			race = instrument(Any, true,  Deferred, when);
 		return {
 			all: instrument(All, true,  Deferred, when),
 			par: instrument(All, false, Deferred, when),
 			any: instrument(Any, false, Deferred, when),
-			one: instrument(Any, true,  Deferred, when)
+			one: race,
+			race: race
 		};
 	};
 });
