@@ -17,13 +17,14 @@ Practical algorithms for node.js and browsers operating on any Promises (any `th
   * `par()` &mdash; collects all results into an array, both normal values, and errors. Never fails.
     * Use case: collect all I/O results regardless of they failed or not.
   * `seq()` &mdash; run asynchronous operations sequentially one after another.
+    * Use case: run operations, which depend on previous asynchronous results.
 * Race asynchronous operations determing a winner:
   * `race()` AKA `one()` &mdash; similar to standard [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race). Resolves or fails with the first fulfilled promise.
   * `any()` &mdash; resolves with a first resolved promise. Failed promises are ignored.
     * Use case: use the first successful I/O request, ignore services that failed.
 * Adapters:
-  * Adapt any value (`then()`-able, or a plain value) to a promise: the venerable `when()`.
-  * Adapt node.js asynchronous callback-style functions to promises.
+  * `when()` &mdash; adapt any value (`then()`-able, or a plain value) to a promise.
+  * `promisify()` &mdash; adapt node.js asynchronous callback-style functions to promise-based functions.
 * Timeouts:
   * `timeout()` &mdash; resolve or reject a value after a timeout. If combine with other composition operations, like `race()`, it can help to implement any time-dependent conditions, e.g., timeouts on operations.
 * Specialized deferreds/promises:
