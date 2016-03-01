@@ -1,6 +1,6 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-unit", "../std", "../when", "../generic/seq", "../timeout"],
-function(module, unit, std, when, instrumentSeq, genericTimeout){
+(["module", "heya-unit", "../index", "../when", "../generic/seq", "../timeout"],
+function(module, unit, std, when, genericSeq, genericTimeout){
 	"use strict";
 
 	if(typeof Promise == "undefined"){ return; }
@@ -9,7 +9,7 @@ function(module, unit, std, when, instrumentSeq, genericTimeout){
 		par = std.par,
 		any = std.any,
 		one = std.one, // race()
-		seq = instrumentSeq(),
+		seq = genericSeq(),
 		timeout = genericTimeout();
 
 	unit.add(module, [
