@@ -8,19 +8,40 @@
 
 Promises and operations over them; useful utility functions.
 
+## What is inside?
+
+Practical algorithms for node.js and browsers operating on any Promises (any `then()`-able will do, including ES6's [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)):
+
+* Aggregate all asynchronous operations:
+  * `all()` &mdash; similar to standard [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all). Returns an array of results, or fails with a first failed promise.
+  * `par()` &mdash; collects all results into an array, both normal values, and errors. Never fails.
+    * Use case: collect all I/O results regardless of they failed or not.
+  * `seq()` &mdash; run asynchronous operations sequentially one after another.
+* Race asynchronous operations determing a winner:
+  * `race()` AKA `one()` &mdash; resolves or fails with the first promise.
+  * `any()` &mdash; resolves with a first resolved promise. Failed promises are ignored.
+    * Use case: use the first successful I/O request, ignore servers that failed.
+* Adapters:
+  * Adapt any value (`then()`-able, or a plain value) to a promise: the venerable `when()`.
+  * Adapt node.js asynchronous callback-style functions to promises.
+* Timeouts:
+  * `timeout()` &mdash; resolve or reject a value after a timeout. If combine with other composition operations, like `race()`, it can help to implement any time-dependent conditions, e.g., timeouts on operations.
+* Specialized deferreds/promises:
+  * `Deferred` &mdash; fast deferred implementation without built-in timeouts like A+ Promises. Implements progress reports, and cancellations. Very helpful for debugging because it preserves call stacks.
+  * `FastDeferred` &mdash; just like `Deferred` but even faster, because it doesn't convert exceptions into failed promises implicitly. It allows to JIT all of its code, and helps to debug unexpected exceptions.
+
 ## How to install
 
-If you plan to use it in your [node.js](http://nodejs.org) project install it
-like this:
+With `npm`:
 
-```
-npm install heya-async
+```sh
+npm install --save heya-async
 ```
 
-For your browser-based projects I suggest to use [volo.js](http://volojs.org):
+With `bower`:
 
-```
-volo install heya/async heya-async
+```sh
+bower install --save heya-async
 ```
 
 ## Documentation
@@ -30,6 +51,10 @@ volo install heya/async heya-async
 * [Timeouts](./docs/timeout.js.md)
 * [Adaptor for values and foreign promise implementations](./docs/when.js.md)
 * [Wrapper for node.js APIs](./docs/promisify.js.md)
+
+## License
+
+BSD or AFL &mdash; your choice
 
 [npm-image]:      https://img.shields.io/npm/v/heya-async.svg
 [npm-url]:        https://npmjs.org/package/heya-async
