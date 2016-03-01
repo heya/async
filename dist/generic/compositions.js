@@ -1,5 +1,5 @@
-(function(_,f,g){g=window.heya.async;g=g.generic||(g.generic={});g.compositions=f(window.heya.async.when);})
-(["../when"], function(when){
+(function(_,f,g){g=window;g=g.heya||(g.heya={});g=g.async||(g.async={});g=g.generic||(g.generic={});g.compositions=f();})
+([], function(){
 	"use strict";
 
 	// based on https://github.com/MaxMotovilov/node-promise/blob/master/promise.js
@@ -104,16 +104,17 @@
 	};
 
 	function instrument(Type, flag, Deferred){
+		var P = Deferred && Deferred.Wrapper || Promise;
+
 		return function(array){
 			array = Array.prototype.slice.call(array instanceof Array ? array : arguments, 0);
 
-			var type = new Type(array, flag),
-				P = Deferred && Deferred.Wrapper || Promise;
+			var type = new Type(array, flag);
 			return new P(function(resolve, reject, cancel){
 				if(type.todo){
 					array.forEach(function(p, i){
 						if(p && typeof p.then == "function"){
-							when(p, Deferred).then(type.succeed(i, resolve, reject), type.failed(i, resolve, reject));
+							p.then(type.succeed(i, resolve, reject), type.failed(i, resolve, reject));
 						}
 					});
 				}else{
@@ -125,7 +126,7 @@
 	}
 
 	return function(Deferred){
-		var race = instrument(Any, true,  Deferred);
+		var race = instrument(Any, true, Deferred);
 		return {
 			all: instrument(All, true,  Deferred),
 			par: instrument(All, false, Deferred),
