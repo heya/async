@@ -4,11 +4,12 @@
 
 	var algos = compositions(Deferred);
 
-	Deferred.all = algos.all;
+	Deferred.Wrapper.all  = Deferred.all  = algos.all;
+	Deferred.Wrapper.race = Deferred.race = algos.race;
+
 	Deferred.par = algos.par;
 	Deferred.any = algos.any;
 	Deferred.one = algos.one;
-	Deferred.race = algos.race;
 
 	return Deferred;
 });
