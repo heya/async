@@ -2,5 +2,5 @@
 (["./generic/compositions"], function(compositions){
 	"use strict";
 
-	return compositions();
+	return typeof Promise == "undefined" ? null : compositions();
 });
