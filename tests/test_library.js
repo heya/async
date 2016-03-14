@@ -1,6 +1,6 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-unit", "../index", "../when", "../generic/seq", "../timeout"],
-function(module, unit, std, when, genericSeq, genericTimeout){
+(["module", "heya-unit", "../index", "../when", "../whilst", "../generic/seq", "../timeout"],
+function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 	"use strict";
 
 	if(typeof Promise == "undefined"){ return; }
@@ -474,6 +474,54 @@ function(module, unit, std, when, genericSeq, genericTimeout){
 				"callback 1: value 1",
 				"callback 2: value 2",
 				"callback 3: value 2"
+			]
+		},
+		{
+			timeout: 500,
+			test: function test_whilst(t){
+				var x = t.startAsync("async");
+				whilst(
+					function(i){ return Promise.resolve(i < 5); },
+					function(i){
+						t.info("body: " + i);
+						return Promise.resolve(i + 1);
+					}
+				)(0).then(function(i){
+					t.info("finish: " + i);
+					x.done();
+				});
+			},
+			logs: [
+				"body: 0",
+				"body: 1",
+				"body: 2",
+				"body: 3",
+				"body: 4",
+				"finish: 5"
+			]
+		},
+		{
+			timeout: 500,
+			test: function test_whilst_no_body(t){
+				var x = t.startAsync("async"), i = 0;
+				whilst(
+					function(){
+						t.info("pred: " + i);
+						++i;
+						return Promise.resolve(i < 5);
+					}
+				)(0).then(function(){
+					t.info("finish");
+					x.done();
+				});
+			},
+			logs: [
+				"pred: 0",
+				"pred: 1",
+				"pred: 2",
+				"pred: 3",
+				"pred: 4",
+				"finish"
 			]
 		}
 	]);
