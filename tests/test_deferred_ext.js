@@ -1,15 +1,17 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-unit", "../Deferred-ext", "../seq", "../when", "../whilst", "../timeout"],
-function(module, unit, Deferred, seq, genericWhen, genericWhilst, genericTimeout){
+(["module", "heya-unit", "../Deferred-ext", "../when", "../whilst", "../timeout"],
+function(module, unit, Deferred, genericWhen, genericWhilst, timeout){
 	"use strict";
 
 	var all = Deferred.all,
 		par = Deferred.par,
 		any = Deferred.any,
 		one = Deferred.one,
-		timeout = genericTimeout(Deferred),
+		seq = Deferred.seq,
 		when    = function(value){ return genericWhen(value, Deferred); },
 		whilst  = function(pred, body){ return genericWhilst(pred, body, Deferred); };
+
+	timeout = timeout(Deferred);
 
 	unit.add(module, [
 		{
@@ -414,16 +416,15 @@ function(module, unit, Deferred, seq, genericWhen, genericWhilst, genericTimeout
 		},
 		{
 			test: function test_seq_resolve_ab(t){
-				var a = seq(
+				var a = seq([
 						function(v){ t.info("callback 1: " + v); return b; },
 						function(v){ t.info("callback 2: " + v); return v; }
-					),
+					]),
 					b = new Deferred();
 				t.info("resolving a");
-				a.resolve("value 1");
+				a("value 1").done(function(v){ t.info("callback 3: " + v); });
 				t.info("resolving b");
 				b.resolve("value 2");
-				a.end.done(function(v){ t.info("callback 3: " + v); });
 			},
 			logs: [
 				"resolving a",
@@ -435,16 +436,15 @@ function(module, unit, Deferred, seq, genericWhen, genericWhilst, genericTimeout
 		},
 		{
 			test: function test_seq_resolve_ba(t){
-				var a = seq(
+				var a = seq([
 						function(v){ t.info("callback 1: " + v); return b; },
 						function(v){ t.info("callback 2: " + v); return v; }
-					),
+					]),
 					b = new Deferred();
-				a.end.done(function(v){ t.info("callback 3: " + v); });
 				t.info("resolving b");
 				b.resolve("value 2");
 				t.info("resolving a");
-				a.resolve("value 1");
+				a("value 1").done(function(v){ t.info("callback 3: " + v); });
 			},
 			logs: [
 				"resolving b",

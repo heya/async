@@ -1,6 +1,6 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-unit", "../index", "../when", "../whilst", "../generic/seq", "../timeout"],
-function(module, unit, std, when, whilst, genericSeq, genericTimeout){
+(["module", "heya-unit", "../index", "../when", "../whilst", "../seq", "../timeout"],
+function(module, unit, std, when, whilst, seq, timeout){
 	"use strict";
 
 	if(typeof Promise == "undefined"){ return; }
@@ -8,9 +8,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 	var all = std.all,
 		par = std.par,
 		any = std.any,
-		one = std.one, // race()
-		seq = genericSeq(),
-		timeout = genericTimeout();
+		one = std.one; // race()
 
 	unit.add(module, [
 		{
@@ -36,7 +34,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_timeout_all(t){
 				var x = t.startAsync("async");
-				std.all(timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)).
+				all([timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)]).
 					then(function(v){
 						eval(t.TEST("t.unify(v, [300, 100, 200])"));
 						x.done();
@@ -47,7 +45,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_timeout_all_fail(t){
 				var x = t.startAsync("async");
-				std.all(timeout.resolve(300), timeout.resolve(100), timeout.reject(200)).
+				all([timeout.resolve(300), timeout.resolve(100), timeout.reject(200)]).
 					then(function(){
 							try{
 								t.error("Should not be here");
@@ -66,7 +64,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_timeout_par(t){
 				var x = t.startAsync("async");
-				std.par(timeout.reject(300), timeout.resolve(100), timeout.reject(200)).
+				par([timeout.reject(300), timeout.resolve(100), timeout.reject(200)]).
 					then(function(v){
 						eval(t.TEST("t.unify(v, [ { timeout: 300 }, 100, { timeout: 200 } ])"));
 						x.done();
@@ -77,7 +75,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_timeout_any(t){
 				var x = t.startAsync("async");
-				std.any(timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)).
+				any([timeout.resolve(300), timeout.resolve(100), timeout.resolve(200)]).
 					then(function(v){
 						eval(t.TEST("v === 100"));
 						x.done();
@@ -174,7 +172,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_all_sync_success(t) {
 				var x = t.startAsync("async");
-				std.all(when("value"), undefined).
+				all([when("value"), undefined]).
 					then(function(v) { t.info( "callback: " + v.join(',') ); x.done(); });
 			},
 			logs: [
@@ -188,7 +186,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					resolveA, resolveB,
 					a = new Promise(function(res){ resolveA = res; }),
 					b = new Promise(function(res){ resolveB = res; });
-				std.all(a, b).
+				all([a, b]).
 					then(function(v) { t.info( "callback: " + v.join(',') ); x.done(); });
 				t.info("resolving b");
 				resolveB("b");
@@ -207,7 +205,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 				var x = t.startAsync("async"), rejectB,
 					a = new Promise(function(){}),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				all(a, b).
+				all([a, b]).
 					then(function(v){ t.info("callback: " + v.join(',')); },
 						function(err){ t.info("errback: " + err); }).
 					then(function(){ x.done(); });
@@ -226,7 +224,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					resolveA, rejectB,
 					a = new Promise(function(res){ resolveA = res; }),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				all(a, b).
+				all([a, b]).
 					then(function(v) { t.info( "callback: " + v.join(',') ); },
 						function(err) { t.info( "errback: " + err ); } ).
 					then(function(){ x.done(); });
@@ -248,7 +246,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					rejectA, resolveB,
 					a = new Promise(function(_, rej){ rejectA = rej; }),
 					b = new Promise(function(res){ resolveB = res; });
-				par(a, b).
+				par([a, b]).
 					then(function(v) { t.info( "callback: " + v.join(',') ); }).
 					then(function(){ x.done(); });
 				t.info("rejecting a");
@@ -269,7 +267,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					rejectA, rejectB,
 					a = new Promise(function(_, rej){ rejectA = rej; }),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				par(a, b).
+				par([a, b]).
 					then(function(v) { t.info( "callback: " + v.join(',') ); },
 						function(v) { t.info( "errback: " + v ); return v; }).
 					then(function(){ x.done(); });
@@ -288,7 +286,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_any_sync_success(t) {
 				var x = t.startAsync("async");
-				any(when("value"), undefined).
+				any([when("value"), undefined]).
 					then(function(v) { t.info( "callback: " + v ); }).
 					then(function(){ x.done(); });
 			},
@@ -303,7 +301,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					resolveA,
 					a = new Promise(function(res){ resolveA = res; }),
 					b = new Promise(function(){});
-				any(a, b).
+				any([a, b]).
 					then(function(v) { t.info( "callback: " + v ); }).
 					then(function(){ x.done(); });
 				t.info("resolving a");
@@ -321,7 +319,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					resolveA, rejectB,
 					a = new Promise(function(res){ resolveA = res; }),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				any(a, b).
+				any([a, b]).
 					then(function(v) { t.info( "callback: " + v ); },
 						function(err) { t.info( "errback: " + err ); return err; }).
 					then(function(){ x.done(); });
@@ -343,7 +341,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					rejectA, rejectB,
 					a = new Promise(function(_, rej){ rejectA = rej; }),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				any(a, b).
+				any([a, b]).
 					then(function(v) { t.info( "callback: " + v ); },
 						function(err) { t.info( "errback: " + err ); return err; }).
 					then(function(){ x.done(); });
@@ -362,7 +360,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_one_sync_success(t) {
 				var x = t.startAsync("async");
-				one(when("value"), undefined).
+				one([when("value"), undefined]).
 					then(function(v) { t.info( "callback: " + v ); }).
 					then(function(){ x.done(); });
 			},
@@ -377,7 +375,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					resolveA,
 					a = new Promise(function(res){ resolveA = res; }),
 					b = new Promise(function(){});
-				one(a, b).
+				one([a, b]).
 					then( function(v) { t.info( "callback: " + v ); } ).
 					then(function(){ x.done(); });
 				t.info("resolving a");
@@ -395,7 +393,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					rejectB,
 					a = new Promise(function(){}),
 					b = new Promise(function(_, rej){ rejectB = rej; });
-				one(a, b).
+				one([a, b]).
 					then(function(v) { t.info( "callback: " + v ); },
 						function(err) { t.info( "errback: " + err ); return err; }).
 					then(function(){ x.done(); });
@@ -414,7 +412,7 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 					rejectA,
 					a = new Promise(function(_, rej){ rejectA = rej; }),
 					b = new Promise(function(){}),
-					c = one(a, b);
+					c = one([a, b]);
 
 				c.then(function(v) { t.info( "callback: " + v ); },
 					function(err) { t.info( "errback: " + err ); return err; }).
@@ -432,17 +430,16 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_seq_resolve_ab(t){
 				var x = t.startAsync("async"),
-					a = seq(
+					a = seq([
 						function(v){ t.info("callback 1: " + v); return b; },
 						function(v){ t.info("callback 2: " + v); return v; }
-					),
+					]),
 					resolveB,
 					b = new Promise(function(res){ resolveB = res; });
 				t.info("resolving a");
-				a.resolve("value 1");
+				a("value 1").then(function(v){ t.info("callback 3: " + v); x.done(); });
 				t.info("resolving b");
 				resolveB("value 2");
-				a.end.then(function(v){ t.info("callback 3: " + v); x.done(); });
 			},
 			logs: [
 				"resolving a",
@@ -456,17 +453,16 @@ function(module, unit, std, when, whilst, genericSeq, genericTimeout){
 			timeout: 500,
 			test: function test_seq_resolve_ba(t){
 				var x = t.startAsync("async"),
-					a = seq(
+					a = seq([
 						function(v){ t.info("callback 1: " + v); return b; },
 						function(v){ t.info("callback 2: " + v); return v; }
-					),
+					]),
 					resolveB,
 					b = new Promise(function(res){ resolveB = res; });
-				a.end.then(function(v){ t.info("callback 3: " + v); x.done(); });
 				t.info("resolving b");
 				resolveB("value 2");
 				t.info("resolving a");
-				a.resolve("value 1");
+				a("value 1").then(function(v){ t.info("callback 3: " + v); x.done(); });
 			},
 			logs: [
 				"resolving b",
