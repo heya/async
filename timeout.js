@@ -2,30 +2,22 @@
 ([], function(){
 	"use strict";
 
-	function TimeoutError(ms){
+	function Timeout(ms){
 		this.timeout = ms;
 	}
-	TimeoutError.prototype = {
+	Timeout.prototype = {
 		toString: function(){ return "[Error: timed out]"; }
-	}
+	};
 
-	function actOn(P, verb, DefaultResolveTo){
-		return function(ms, uncaught, resolveTo){
-			if(verb === "resolve"){
-				resolveTo = uncaught;
-				uncaught = void 0;
-			}
-			var value = ms;
-			if(typeof resolveTo != "undefined"){
-				value = resolveTo;
-			}else if(DefaultResolveTo){
-				value = new DefaultResolveTo(ms);
-			}
+	function delay(isResolve){
+		return function(ms, Deferred){
+			var P = Deferred && Deferred.Wrapper || Promise,
+				value = isResolve ? ms : new Timeout(ms);
 			return new P(function(resolve, reject, cancel){
 				var handle = setTimeout(function(){
 					if(handle){
 						handle = null;
-						(verb === "resolve" ? resolve : reject)(value, uncaught);
+						(isResolve ? resolve : reject)(value);
 					}
 				}, Math.max(ms, 0));
 				typeof cancel == "function" && cancel(function(){
@@ -38,13 +30,17 @@
 		};
 	}
 
-	return function instrumentTimeout(Deferred){
-		var P = Deferred && Deferred.Wrapper || Promise;
+	function timeout(Deferred){
+		return {
+			resolve: function(ms){ return timeout.resolve(ms, Deferred); },
+			reject:  function(ms){ return timeout.reject (ms, Deferred); },
+			Timeout: Timeout
+		};
+	}
 
-		var timeout = actOn(P, "reject", TimeoutError);
-		timeout.reject  = timeout;
-		timeout.resolve = actOn(P, "resolve");
+	timeout.resolve = delay(true);
+	timeout.reject  = delay(false);
+	timeout.Timeout = Timeout;
 
-		return timeout;
-	};
+	return timeout;
 });
