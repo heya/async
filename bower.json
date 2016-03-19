@@ -30,6 +30,7 @@
     "tests",
     "docs",
     "experimental",
-    "promisify.js"
+    "promisify.js",
+    "coverage"
   ]
 }
