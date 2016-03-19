@@ -71,7 +71,7 @@ Included implementations of deferreds (can be used instead or alongside with the
   * Module [Deferred-ext](https://github.com/heya/async/wiki/async.Deferred-ext), which adds compositions instrumented for `Deferred`.
 * Module [FastDeferred](https://github.com/heya/async/wiki/async.FastDeferred).
   * Module [FastDeferred-ext](https://github.com/heya/async/wiki/async.FastDeferred-ext), which adds compositions instrumented for `FastDeferred`.
-* Differences between them and standard promises are described [here](./Concepts:-differences-between-Promise,-Deferred,-and-FastDeferred).
+* Differences between them and standard promises are described [here](https://github.com/heya/async/wiki/Concepts:-differences-between-Promise,-Deferred,-and-FastDeferred).
 
 ## License
 
