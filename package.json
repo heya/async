@@ -1,13 +1,10 @@
 {
   "name": "heya-async",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Asynchronous utilities: promises, deferreds.",
   "main.js": "index.js",
   "directories": {
     "test": "tests"
-  },
-  "dependencies": {
-    "heya-ice": ">=0.1"
   },
   "devDependencies": {
     "heya-globalize": "^1.0.3",
@@ -37,7 +34,6 @@
   "license": "BSD-3-Clause",
   "browserGlobals": {
     "!root": "heya.async",
-    "heya-ice": "heya.ice",
     "./Deferred-ext": "!heya.async.Deferred",
     "./FastDeferred-ext": "!heya.async.FastDeferred"
   }

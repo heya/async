@@ -1,13 +1,15 @@
 /* UMD.define */ (typeof define=="function"&&define||function(d,f,m){m={module:module,require:require};module.exports=f.apply(null,d.map(function(n){return m[n]||require(n)}))})
-(["module", "heya-ice/assert"], function(module, ice){
+([], function(){
 	"use strict";
 
-	ice = ice.specialize(module);
+	// ice is "heya-ice/assert"
+	// ice = ice.specialize(module);
 
 	// Based on Max' micro-deferred: https://gist.github.com/MaxMotovilov/4750596
 
 	function Micro(val){
-		ice.assert(!(val instanceof Micro), "Attempt to improperly construct a promise");
+		// ice.assert(!(val instanceof Micro), "Attempt to improperly construct a promise");
+		if (val instanceof Micro) { throw new Error("Attempt to improperly construct a promise"); }
 
 		if(val instanceof Callback){
 			this.parent = val;		// State W: Weak promise
@@ -37,7 +39,8 @@
 
 		resolve: function(val, isEvent){
 			// ASSERT( state == P )
-			ice.assert(!("value" in this) && this.chain, "Promise cannot be resolved");
+			// ice.assert(!("value" in this) && this.chain, "Promise cannot be resolved");
+			if ("value" in this || !this.chain) { throw new Error("Promise cannot be resolved"); }
 
 			if(!isEvent && this.rebind(val)){
 				if("value" in this){
@@ -76,7 +79,8 @@
 
 		addCallback: function(cb){
 			if(!this.chain){
-				ice.assert("parent" in this, "Malformed promise state");
+				// ice.assert("parent" in this, "Malformed promise state");
+				if (!("parent" in this)) { throw new Error("Malformed promise state"); }
 
 				if("value" in this.parent){
 					// state: W -> R

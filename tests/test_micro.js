@@ -244,6 +244,27 @@ function(module, unit, Micro){
 				"callback 1: value 1",
 				"callback 2: value 2"
 			]
+		},
+		{
+			test: function test_double_resolve(t){
+				var a = new Micro();
+				a.then(function(v){ t.info("value: " + v); });
+				t.info("resolving with 1");
+				a.resolve(1);
+				t.info("resolving with 2");
+				try{
+					a.resolve(2);
+					t.info("shouldn't be here");
+				}catch(e){
+					t.info("error");
+				}
+			},
+			logs: [
+				"resolving with 1",
+				"value: 1",
+				"resolving with 2",
+				"error"
+			]
 		}
 	]);
 

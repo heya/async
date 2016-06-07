@@ -79,6 +79,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.0.1 &mdash; *Removed a direct dependence on `heya-ice` in `Micro`.*
 - 1.0.0 &mdash; *Starts the new generation.*
 
 For information on all pre-1.0.0 versions, please see the commit log.
