@@ -15,6 +15,8 @@ matrix:
   exclude:
     - node_js: "4"
       env: PHANTOM=true
+    - node_js: "5"
+      env: PHANTOM=true
 
 before_script: if [ "$PHANTOM" == "true" ]; then export RUN_TEST="phantomjs tests/phantom.js"; else export RUN_TEST="npm test"; fi
 
