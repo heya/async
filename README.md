@@ -3,8 +3,8 @@
 [![Build status][travis-image]][travis-url]
 [![Dependencies][deps-image]][deps-url]
 [![devDependencies][dev-deps-image]][dev-deps-url]
+[![Greenkeeper badge](https://badges.greenkeeper.io/heya/async.svg)](https://greenkeeper.io/)
 [![NPM version][npm-image]][npm-url]
-
 
 Promises and operations over them; useful utility functions.
 
