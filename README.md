@@ -1,5 +1,7 @@
 # Async
 
+[![Join the chat at https://gitter.im/heya/async](https://badges.gitter.im/heya/async.svg)](https://gitter.im/heya/async?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build status][travis-image]][travis-url]
 [![Dependencies][deps-image]][deps-url]
 [![devDependencies][dev-deps-image]][dev-deps-url]
